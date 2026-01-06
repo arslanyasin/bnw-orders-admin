@@ -1,4 +1,3 @@
-# Use Node.js 21.4.0 Alpine as base image
 FROM node:21.4.0-alpine AS runner
 
 # Set working directory
