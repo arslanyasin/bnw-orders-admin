@@ -1,4 +1,3 @@
-# Use Node.js 21.4.0 Alpine as base image
 FROM node:21.4.0-alpine AS runner
 
 # Set working directory
@@ -10,7 +9,6 @@ RUN adduser --system --uid 1001 nextjs
 
 # Copy the built application and dependencies from Jenkins build stage with correct ownership
 COPY --chown=nextjs:nodejs .next ./.next
-COPY --chown=nextjs:nodejs public ./public
 COPY --chown=nextjs:nodejs package.json ./
 COPY --chown=nextjs:nodejs node_modules/ node_modules/
 COPY --chown=nextjs:nodejs next.config.mjs ./

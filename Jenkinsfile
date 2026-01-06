@@ -120,7 +120,7 @@ pipeline {
                 script {
                     echo "🏗️ Building Next.js application..."
                     try {
-                        withEnv(['NEXT_PUBLIC_API_URL=/api']) {
+                        withEnv(['NEXT_PUBLIC_API_URL=/api/v1']) {
                             sh 'npm run build'
                         }
                     } catch (Exception e) {
@@ -191,7 +191,7 @@ pipeline {
                 script {
                     echo "📦 Deploying to server..."
                     try {
-                        sh "${env.CHECKIFY_ADMIN_DEV_SSH}"
+                        sh "${env.BNW_ORDERS_ADMIN_SSH}"
                     } catch (Exception e) {
                         echo "❌ Docker push failed: ${e.getMessage()}"
                         FAILED_STAGE = "Deployment"
