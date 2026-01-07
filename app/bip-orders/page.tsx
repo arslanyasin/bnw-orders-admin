@@ -798,7 +798,7 @@ const BipOrdersPage = () => {
               <Truck size={18} />
             </button>
           )}
-          {order.status === 'dispatched' && order.shipmentId && (
+          {order.status === 'Dispatched' && order.shipmentId && (
             <button
               onClick={(e) => {
                 e.stopPropagation();
