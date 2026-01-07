@@ -120,7 +120,7 @@ pipeline {
                 script {
                     echo "🏗️ Building Next.js application..."
                     try {
-                        withEnv(['NEXT_PUBLIC_API_URL=/api/v1']) {
+                        withEnv(['NEXT_PUBLIC_API_URL=/api/v1','NEXT_PUBLIC_TCS_ACCESS_TOKEN=P%2FREqsxCAsG8lc1yIuJssO%2B74fL25IdfkxKRDDXopCELAHML%2B8DSn8SoAQ%2FVn589PJe3n%2BPeE94MESISWxDTE7jyoBZhaIrk1wfA0w9Z%2BKse2qHwdlovntjsC9oOJI7jJc5RVKGLzIdjnf33l3uOggf8ZeMjlcYdofY8u%2B7AO%2Fp7WijSPE66%2FUNHZb9twvxj']) {
                             sh 'npm run build'
                         }
                     } catch (Exception e) {
