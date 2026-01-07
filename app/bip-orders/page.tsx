@@ -751,11 +751,11 @@ const BipOrdersPage = () => {
             className="px-2 py-1 text-xs border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
             onClick={(e) => e.stopPropagation()}
           >
-            <option value="Pending">Pending</option>
-            <option value="Confirmed">Confirmed</option>
-            <option value="Processing">Processing</option>
-            <option value="Dispatched">Dispatched</option>
-            <option value="Delivered">Delivered</option>
+            <option value="pending">Pending</option>
+            <option value="confirmed">Confirmed</option>
+            <option value="processing">Processing</option>
+            <option value="dispatched">Dispatched</option>
+            <option value="delivered">Delivered</option>
           </select>
         </div>
       ),
@@ -975,11 +975,11 @@ const BipOrdersPage = () => {
                   onChange={(e) => setStatusFilter(e.target.value as any)}
                 >
                   <option value="all">All Status</option>
-                  <option value="Pending">Pending</option>
-                  <option value="Confirmed">Confirmed</option>
-                  <option value="Processing">Processing</option>
-                  <option value="Dispatched">Dispatched</option>
-                  <option value="Delivered">Delivered</option>
+                  <option value="pending">Pending</option>
+                  <option value="confirmed">Confirmed</option>
+                  <option value="processing">Processing</option>
+                  <option value="dispatched">Dispatched</option>
+                  <option value="delivered">Delivered</option>
                 </select>
               </div>
             </div>
