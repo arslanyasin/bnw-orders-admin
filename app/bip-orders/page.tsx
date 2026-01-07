@@ -497,7 +497,7 @@ const BipOrdersPage = () => {
         product:order.product,
       }));
 
-      const result = await whatsappService.sendBulkOrderConfirmations(ordersData, flowId);
+      const result = await whatsappService.sendBulkOrderConfirmations(ordersData);
 
       setIsWhatsAppModalOpen(false);
       setIsWhatsAppMode(false);

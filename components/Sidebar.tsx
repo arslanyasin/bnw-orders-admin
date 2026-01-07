@@ -28,12 +28,12 @@ const menuItems: MenuItem[] = [
     icon: <LayoutDashboard size={20} />,
   },
   {
-    label: 'Bank Orders',
+    label: 'Reward Orders',
     href: '/bank-orders',
     icon: <CreditCard size={20} />,
   },
   {
-    label: 'BIP Orders',
+    label: 'HIP Orders',
     href: '/bip-orders',
     icon: <FileText size={20} />,
   },
