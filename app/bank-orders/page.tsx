@@ -1194,7 +1194,7 @@ const BankOrdersPage = () => {
         <WhatsAppConfirmationModal
           isOpen={isWhatsAppModalOpen}
           onClose={() => setIsWhatsAppModalOpen(false)}
-          onSubmit={handleSubmitWhatsApp}
+          onSubmit={()=>handleSubmitWhatsApp}
           isLoading={isSendingWhatsApp}
           orderCount={selectedOrdersForWhatsApp.length}
           orderType="Bank"
