@@ -6,6 +6,8 @@ import { BipOrder } from './bip';
 export interface PurchaseOrderProduct {
   productId: string | Product;
   quantity: number;
+  productName: string;
+  bankProductNumber: string;
   unitPrice: number;
   serialNumber?: string;
 }
