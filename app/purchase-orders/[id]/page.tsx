@@ -56,7 +56,7 @@ const PurchaseOrderDetailPage = () => {
 
   const getProductDetails = (productId: string | Product): { name: string; giftCode: string } => {
     if (typeof productId === 'object' && productId !== null) {
-      console.log(productId);
+      console.log('Product ID',productId);
       const product = productId as Product;
       return {
         name: product.name,
@@ -228,15 +228,16 @@ const PurchaseOrderDetailPage = () => {
             <tbody>
               {purchaseOrder.products.map((product, index) => {
                 const itemTotal = product.quantity * product.unitPrice;
+                console.log(product)
                 const productDetails = getProductDetails(product.productId);
                 return (
                   <tr key={index} className="border-b border-gray-200">
                     <td className="py-3 px-4 text-sm text-gray-600">{index + 1}</td>
                     <td className="py-3 px-4 text-sm text-gray-900">
                       <div>
-                        <div className="font-medium">{productDetails.name}</div>
+                        <div className="font-medium">{product.productName}</div>
                         <div className="text-xs text-gray-600 mt-0.5">
-                          Gift Code: <span className="font-mono font-semibold">{productDetails.giftCode}</span>
+                          Gift Code: <span className="font-mono font-semibold">{product.bankProductNumber}</span>
                         </div>
                       </div>
                     </td>
@@ -289,7 +290,7 @@ const PurchaseOrderDetailPage = () => {
       {/* Footer with BNW Branding */}
       <div className="mt-12 pt-6 border-t-2 border-gray-200">
         <div className="text-center text-sm text-gray-600">
-          <p className="font-bold text-blue-600 mb-1">BNW - Business Network World</p>
+          <p className="font-bold text-blue-600 mb-1">BNW Collections</p>
           <p className="text-xs text-gray-500">Thank you for your business!</p>
         </div>
       </div>
