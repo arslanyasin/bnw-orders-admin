@@ -6,6 +6,7 @@ import AdminLayout from '@/components/AdminLayout';
 import { Button, Table, SelectableTable, Badge, Loader, CombinedPOPreviewModal } from '@/components';
 import PurchaseOrderFormModal from '@/components/PurchaseOrderFormModal';
 import { purchaseOrderService } from '@/services/purchaseOrderService';
+import { vendorService } from '@/services/vendorService';
 import { PurchaseOrder, Vendor, Product, CombinedPOPreview } from '@/types';
 import { Plus, Eye, Edit, Trash2, Search, Layers, XCircle } from 'lucide-react';
 
@@ -22,6 +23,8 @@ const PurchaseOrdersPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | PurchaseOrderStatus>('all');
+  const [vendorFilter, setVendorFilter] = useState<string>('all');
+  const [vendors, setVendors] = useState<Vendor[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedPO, setSelectedPO] = useState<PurchaseOrder | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -38,6 +41,20 @@ const PurchaseOrdersPage = () => {
   const [serialNumbers, setSerialNumbers] = useState<Record<string, string>>({});
   const [isUpdatingSerials, setIsUpdatingSerials] = useState(false);
 
+  // Fetch vendors on component mount
+  useEffect(() => {
+    const fetchVendors = async () => {
+      try {
+        const response = await vendorService.getAll({ limit: 1000 });
+        setVendors(response.data || []);
+      } catch (error) {
+        console.error('[Purchase Orders] Failed to fetch vendors:', error);
+        setVendors([]);
+      }
+    };
+    fetchVendors();
+  }, []);
+
   // Debounce search term
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -53,7 +70,7 @@ const PurchaseOrdersPage = () => {
   // Fetch purchase orders whenever dependencies change
   useEffect(() => {
     fetchPurchaseOrders();
-  }, [currentPage, pageSize, debouncedSearchTerm, statusFilter]);
+  }, [currentPage, pageSize, debouncedSearchTerm, statusFilter, vendorFilter]);
 
   const fetchPurchaseOrders = async () => {
     try {
@@ -70,6 +87,10 @@ const PurchaseOrdersPage = () => {
 
       if (statusFilter !== 'all') {
         params.status = statusFilter;
+      }
+
+      if (vendorFilter !== 'all') {
+        params.vendorId = vendorFilter;
       }
 
       console.log('[Purchase Orders] Fetching with params:', params);
@@ -568,6 +589,21 @@ const PurchaseOrdersPage = () => {
                   <option value="delivered">Delivered</option>
                   <option value="cancelled">Cancelled</option>
                   <option value="merged">Merged</option>
+                </select>
+              </div>
+              <div className="flex items-center gap-2">
+                <label className="text-sm text-gray-600 whitespace-nowrap">Vendor:</label>
+                <select
+                  className="px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white min-w-[180px]"
+                  value={vendorFilter}
+                  onChange={(e) => setVendorFilter(e.target.value)}
+                >
+                  <option value="all">All Vendors</option>
+                  {vendors.map((vendor) => (
+                    <option key={vendor._id} value={vendor._id}>
+                      {vendor.vendorName}
+                    </option>
+                  ))}
                 </select>
               </div>
             </div>
