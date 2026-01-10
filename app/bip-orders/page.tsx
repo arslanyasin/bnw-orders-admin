@@ -559,11 +559,11 @@ const BipOrdersPage = () => {
                   selectedOrdersForWhatsApp.length === orders.length
             }
             onChange={handleToggleAllOrders}
-            className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
+            className="w-6 h-6 text-blue-600 rounded border-gray-300 focus:ring-blue-500 cursor-pointer"
           />
         ),
         accessor: 'checkbox',
-        width: '50px',
+        width: '80px',
         render: (order: BipOrder) => {
           const isDisabled = isPrintChallanMode
             ? !order.deliveryChallan
@@ -599,7 +599,7 @@ const BipOrdersPage = () => {
               }}
               onClick={(e) => e.stopPropagation()}
               disabled={isDisabled}
-              className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-6 h-6 text-blue-600 rounded border-gray-300 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
               title={title}
             />
           );
