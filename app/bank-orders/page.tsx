@@ -1022,7 +1022,6 @@ const BankOrdersPage = () => {
               <Table
                 columns={columns}
                 data={orders}
-                onRowClick={(order) => router.push(`/bank-orders/${order._id}`)}
                 emptyMessage="No bank orders found"
               />
 

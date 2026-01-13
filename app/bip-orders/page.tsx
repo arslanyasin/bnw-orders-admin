@@ -477,7 +477,7 @@ const BipOrdersPage = () => {
       const ordersData = selectedOrders.map(order => ({
         phone: order.mobile1.startsWith('+92') ? order.mobile1 : `+92${order.mobile1.replace(/^0+/, '')}`,
         customerName: order.customerName,
-        orderNumber: order.poNumber,
+        orderNumber: order.eforms,
         orderPrice: order.amount,
         address: `${order.address}, ${order.city}`,
         product: order.product,
@@ -1031,7 +1031,6 @@ const BipOrdersPage = () => {
               <Table
                 columns={columns}
                 data={orders}
-                onRowClick={(order) => router.push(`/bip-orders/${order._id}`)}
                 emptyMessage="No BIP orders found"
               />
 
