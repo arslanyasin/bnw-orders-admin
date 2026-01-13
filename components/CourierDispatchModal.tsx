@@ -111,7 +111,7 @@ const CourierDispatchModal: React.FC<CourierDispatchModalProps> = ({
     }
 
     if (remarks.trim()) {
-      dispatchData.specialInstructions = remarks.trim();
+      dispatchData.remarks = remarks.trim();
     }
 
     try {
