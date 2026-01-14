@@ -530,7 +530,7 @@ const BipOrdersPage = () => {
     setSelectedOrderForEdit(null);
   };
 
-  const handleSubmitEdit = async (data: { address: string; city: string; mobile: string; color: string }) => {
+  const handleSubmitEdit = async (data: { address: string; city: string; mobile1: string; color: string }) => {
     if (!selectedOrderForEdit) return;
 
     try {
