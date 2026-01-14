@@ -14,12 +14,15 @@ export default function LoginPage() {
     password: '',
   });
   const [error, setError] = useState('');
+  const [isRedirecting, setIsRedirecting] = useState(false);
 
+  // Redirect if already authenticated
   useEffect(() => {
-    if (isAuthenticated) {
-      router.push('/dashboard');
+    if (isAuthenticated && !isRedirecting) {
+      setIsRedirecting(true);
+      router.replace('/dashboard');
     }
-  }, [isAuthenticated, router]);
+  }, [isAuthenticated, router, isRedirecting]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -27,7 +30,9 @@ export default function LoginPage() {
 
     try {
       await login(credentials);
-      router.push('/dashboard');
+      // Use replace instead of push to prevent back button issues
+      setIsRedirecting(true);
+      router.replace('/dashboard');
     } catch (err: any) {
       setError(err.message || 'Login failed. Please check your credentials.');
     }
