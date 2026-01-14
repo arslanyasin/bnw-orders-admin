@@ -7,7 +7,7 @@ import { BipOrder } from '@/types';
 interface EditBipOrderModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (data: { address: string; city: string; mobile: string }) => void;
+  onSubmit: (data: { address: string; city: string; mobile: string; color: string }) => void;
   isLoading: boolean;
   order: BipOrder | null;
 }
@@ -23,6 +23,7 @@ const EditBipOrderModal: React.FC<EditBipOrderModalProps> = ({
     address: '',
     city: '',
     mobile: '',
+    color: '',
   });
 
   useEffect(() => {
@@ -31,6 +32,7 @@ const EditBipOrderModal: React.FC<EditBipOrderModalProps> = ({
         address: order.address || '',
         city: order.city || '',
         mobile: order.mobile1 || '',
+        color: order.color || '',
       });
     }
   }, [order]);
@@ -61,6 +63,7 @@ const EditBipOrderModal: React.FC<EditBipOrderModalProps> = ({
       address: '',
       city: '',
       mobile: '',
+      color: '',
     });
     onClose();
   };
@@ -125,6 +128,21 @@ const EditBipOrderModal: React.FC<EditBipOrderModalProps> = ({
               placeholder="Enter mobile number"
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               required
+              disabled={isLoading}
+            />
+          </div>
+
+          {/* Color */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Color
+            </label>
+            <input
+              type="text"
+              value={formData.color}
+              onChange={(e) => setFormData({ ...formData, color: e.target.value })}
+              placeholder="Enter color"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               disabled={isLoading}
             />
           </div>
