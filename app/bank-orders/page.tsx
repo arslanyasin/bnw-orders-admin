@@ -751,19 +751,21 @@ const BankOrdersPage = () => {
       render: (order: BankOrder) => (
         <div className="flex items-center gap-2">
           <select
-            value={order.status}
-            onChange={(e) => {
-              e.stopPropagation();
-              handleStatusUpdate(order._id, e.target.value as OrderStatus);
-            }}
-            className="px-2 py-1 text-xs border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
-            onClick={(e) => e.stopPropagation()}
+              value={order.status}
+              onChange={(e) => {
+                e.stopPropagation();
+                handleStatusUpdate(order._id, e.target.value as OrderStatus);
+              }}
+              className="px-2 py-1 text-xs border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
+              onClick={(e) => e.stopPropagation()}
           >
             <option value="pending">Pending</option>
             <option value="confirmed">Confirmed</option>
             <option value="processing">Processing</option>
             <option value="dispatched">Dispatched</option>
             <option value="delivered">Delivered</option>
+            <option value="cancelled">Cancelled</option>
+            <option value="returned">Returned</option>
           </select>
         </div>
       ),
@@ -1017,9 +1019,9 @@ const BankOrdersPage = () => {
               <div className="flex items-center gap-2">
                 <label className="text-sm text-gray-600 whitespace-nowrap">Status:</label>
                 <select
-                  className="px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white min-w-[140px]"
-                  value={statusFilter}
-                  onChange={(e) => setStatusFilter(e.target.value as any)}
+                    className="px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white min-w-[140px]"
+                    value={statusFilter}
+                    onChange={(e) => setStatusFilter(e.target.value as any)}
                 >
                   <option value="all">All Status</option>
                   <option value="pending">Pending</option>
@@ -1027,6 +1029,8 @@ const BankOrdersPage = () => {
                   <option value="processing">Processing</option>
                   <option value="dispatched">Dispatched</option>
                   <option value="delivered">Delivered</option>
+                  <option value="cancelled">Cancelled</option>
+                  <option value="returned">Returned</option>
                 </select>
               </div>
             </div>
