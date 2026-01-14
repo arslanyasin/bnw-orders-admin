@@ -6,3 +6,5 @@ export { default as Modal } from './Modal';
 export { default as Table } from './Table';
 export { default as SelectableTable } from './SelectableTable';
 export { default as CombinedPOPreviewModal } from './CombinedPOPreviewModal';
+export { default as EditOrderModal } from './EditOrderModal';
+export { default as EditBipOrderModal } from './EditBipOrderModal';

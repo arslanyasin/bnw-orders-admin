@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import AdminLayout from '@/components/AdminLayout';
-import { Button, Table, Badge, Loader } from '@/components';
+import { Button, Table, Badge, Loader, EditOrderModal } from '@/components';
 import ImportOrdersModal from '@/components/ImportOrdersModal';
 import PurchaseOrderFormModal from '@/components/PurchaseOrderFormModal';
 import CourierDispatchModal from '@/components/CourierDispatchModal';
@@ -60,6 +60,11 @@ const BankOrdersPage = () => {
   const [selectedOrdersForWhatsApp, setSelectedOrdersForWhatsApp] = useState<string[]>([]);
   const [isWhatsAppModalOpen, setIsWhatsAppModalOpen] = useState(false);
   const [isSendingWhatsApp, setIsSendingWhatsApp] = useState(false);
+
+  // Edit order state
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [selectedOrderForEdit, setSelectedOrderForEdit] = useState<BankOrder | null>(null);
+  const [isUpdating, setIsUpdating] = useState(false);
 
   // Debounce search term
   useEffect(() => {
@@ -542,6 +547,33 @@ const BankOrdersPage = () => {
     );
   };
 
+  const handleOpenEditModal = (order: BankOrder) => {
+    setSelectedOrderForEdit(order);
+    setIsEditModalOpen(true);
+  };
+
+  const handleCloseEditModal = () => {
+    setIsEditModalOpen(false);
+    setSelectedOrderForEdit(null);
+  };
+
+  const handleSubmitEdit = async (data: { address: string; city: string; mobile1: string }) => {
+    if (!selectedOrderForEdit) return;
+
+    try {
+      setIsUpdating(true);
+      await bankOrderService.update(selectedOrderForEdit._id, data);
+
+      handleCloseEditModal();
+      fetchOrders(); // Refresh to show updated data
+      alert('Order updated successfully!');
+    } catch (error: any) {
+      alert(error.message || 'Failed to update order');
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
   // Create columns array with conditional checkbox column
   const checkboxColumn = isPrintChallanMode || isBulkPOMode || isWhatsAppMode
     ? {
@@ -751,6 +783,16 @@ const BankOrdersPage = () => {
             title="View Details"
           >
             <Eye size={18} />
+          </button>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              handleOpenEditModal(order);
+            }}
+            className="text-yellow-600 hover:text-yellow-800"
+            title="Edit Order"
+          >
+            <Edit size={18} />
           </button>
           <button
             onClick={(e) => {
@@ -1183,6 +1225,15 @@ const BankOrdersPage = () => {
           isLoading={isSendingWhatsApp}
           orderCount={selectedOrdersForWhatsApp.length}
           orderType="Bank"
+        />
+
+        {/* Edit Order Modal */}
+        <EditOrderModal
+          isOpen={isEditModalOpen}
+          onClose={handleCloseEditModal}
+          onSubmit={handleSubmitEdit}
+          isLoading={isUpdating}
+          order={selectedOrderForEdit}
         />
       </div>
     </AdminLayout>

@@ -33,7 +33,7 @@ export const bipService = {
   },
 
   update: async (id: string, data: UpdateBipOrderDto): Promise<ApiResponse<BipOrder>> => {
-    const response = await apiClient.put<ApiResponse<BipOrder>>(`/bip/${id}`, data);
+    const response = await apiClient.patch<ApiResponse<BipOrder>>(`/bip/${id}`, data);
     return response.data;
   },
 

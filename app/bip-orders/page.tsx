@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import AdminLayout from '@/components/AdminLayout';
-import { Button, Table, Loader } from '@/components';
+import { Button, Table, Loader, EditBipOrderModal } from '@/components';
 import ImportBipOrdersModal from '@/components/ImportBipOrdersModal';
 import PurchaseOrderFormModal from '@/components/PurchaseOrderFormModal';
 import CourierDispatchModal from '@/components/CourierDispatchModal';
@@ -60,6 +60,11 @@ const BipOrdersPage = () => {
   const [selectedOrdersForWhatsApp, setSelectedOrdersForWhatsApp] = useState<string[]>([]);
   const [isWhatsAppModalOpen, setIsWhatsAppModalOpen] = useState(false);
   const [isSendingWhatsApp, setIsSendingWhatsApp] = useState(false);
+
+  // Edit order state
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [selectedOrderForEdit, setSelectedOrderForEdit] = useState<BipOrder | null>(null);
+  const [isUpdating, setIsUpdating] = useState(false);
 
   // Debounce search term
   useEffect(() => {
@@ -515,6 +520,33 @@ const BipOrdersPage = () => {
     );
   };
 
+  const handleOpenEditModal = (order: BipOrder) => {
+    setSelectedOrderForEdit(order);
+    setIsEditModalOpen(true);
+  };
+
+  const handleCloseEditModal = () => {
+    setIsEditModalOpen(false);
+    setSelectedOrderForEdit(null);
+  };
+
+  const handleSubmitEdit = async (data: { address: string; city: string; mobile: string }) => {
+    if (!selectedOrderForEdit) return;
+
+    try {
+      setIsUpdating(true);
+      await bipService.update(selectedOrderForEdit._id, data);
+
+      handleCloseEditModal();
+      fetchOrders(); // Refresh to show updated data
+      alert('Order updated successfully!');
+    } catch (error: any) {
+      alert(error.message || 'Failed to update order');
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
   const handleSort = (field: SortField) => {
     if (sortField === field) {
       setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
@@ -761,6 +793,16 @@ const BipOrdersPage = () => {
             title="View Details"
           >
             <Eye size={18} />
+          </button>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              handleOpenEditModal(order);
+            }}
+            className="text-yellow-600 hover:text-yellow-800"
+            title="Edit Order"
+          >
+            <Edit size={18} />
           </button>
           <button
             onClick={(e) => {
@@ -1188,6 +1230,15 @@ const BipOrdersPage = () => {
           isLoading={isSendingWhatsApp}
           orderCount={selectedOrdersForWhatsApp.length}
           orderType="BIP"
+        />
+
+        {/* Edit Order Modal */}
+        <EditBipOrderModal
+          isOpen={isEditModalOpen}
+          onClose={handleCloseEditModal}
+          onSubmit={handleSubmitEdit}
+          isLoading={isUpdating}
+          order={selectedOrderForEdit}
         />
       </div>
     </AdminLayout>

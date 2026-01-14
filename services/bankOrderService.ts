@@ -34,7 +34,7 @@ export const bankOrderService = {
   },
 
   update: async (id: string, data: UpdateBankOrderDto): Promise<ApiResponse<BankOrder>> => {
-    const response = await apiClient.put<ApiResponse<BankOrder>>(`/bank-orders/${id}`, data);
+    const response = await apiClient.patch<ApiResponse<BankOrder>>(`/bank-orders/${id}`, data);
     return response.data;
   },
 
