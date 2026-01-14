@@ -30,7 +30,7 @@ const EditBipOrderModal: React.FC<EditBipOrderModalProps> = ({
       setFormData({
         address: order.address || '',
         city: order.city || '',
-        mobile: order.mobile || '',
+        mobile: order.mobile1 || '',
       });
     }
   }, [order]);
