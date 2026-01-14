@@ -111,7 +111,10 @@ const CourierDispatchModal: React.FC<CourierDispatchModalProps> = ({
     }
 
     if (remarks.trim()) {
-      dispatchData.remarks = remarks.trim();
+      if(isManualDispatch)
+        dispatchData.remarks = remarks.trim();
+      else
+        dispatchData.specialInstructions = remarks.trim();
     }
 
     try {

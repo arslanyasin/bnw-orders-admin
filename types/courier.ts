@@ -13,6 +13,7 @@ export interface DispatchOrderRequest {
   declaredValue?: number;
   productDescription?: string;
   remarks?: string;
+  specialInstructions?: string;
   isManualDispatch?: boolean;
   trackingNumber?: string;
   consignmentNumber?: string;
