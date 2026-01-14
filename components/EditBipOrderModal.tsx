@@ -7,7 +7,7 @@ import { BipOrder } from '@/types';
 interface EditBipOrderModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (data: { address: string; city: string; mobile: string; color: string }) => void;
+  onSubmit: (data: { address: string; city: string; mobile1: string; color: string }) => void;
   isLoading: boolean;
   order: BipOrder | null;
 }
@@ -22,7 +22,7 @@ const EditBipOrderModal: React.FC<EditBipOrderModalProps> = ({
   const [formData, setFormData] = useState({
     address: '',
     city: '',
-    mobile: '',
+    mobile1: '',
     color: '',
   });
 
@@ -31,7 +31,7 @@ const EditBipOrderModal: React.FC<EditBipOrderModalProps> = ({
       setFormData({
         address: order.address || '',
         city: order.city || '',
-        mobile: order.mobile1 || '',
+        mobile1: order.mobile1 || '',
         color: order.color || '',
       });
     }
@@ -50,7 +50,7 @@ const EditBipOrderModal: React.FC<EditBipOrderModalProps> = ({
       return;
     }
 
-    if (!formData.mobile.trim()) {
+    if (!formData.mobile1.trim()) {
       alert('Mobile number is required');
       return;
     }
@@ -62,7 +62,7 @@ const EditBipOrderModal: React.FC<EditBipOrderModalProps> = ({
     setFormData({
       address: '',
       city: '',
-      mobile: '',
+      mobile1: '',
       color: '',
     });
     onClose();
@@ -123,8 +123,8 @@ const EditBipOrderModal: React.FC<EditBipOrderModalProps> = ({
             </label>
             <input
               type="text"
-              value={formData.mobile}
-              onChange={(e) => setFormData({ ...formData, mobile: e.target.value })}
+              value={formData.mobile1}
+              onChange={(e) => setFormData({ ...formData, mobile1: e.target.value })}
               placeholder="Enter mobile number"
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               required
