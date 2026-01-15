@@ -383,12 +383,30 @@ const PurchaseOrdersPage = () => {
       ),
     },
     {
-      header: 'Products',
+      header: 'Product Name',
       accessor: 'products',
+      width: '200px',
+      render: (po: PurchaseOrder) => {
+        const firstProduct = po.products?.[0];
+        return (
+          <span className="text-gray-900">
+            {firstProduct?.productName || 'N/A'}
+          </span>
+        );
+      },
+    },
+    {
+      header: 'Color',
+      accessor: 'color',
       width: '100px',
-      render: (po: PurchaseOrder) => (
-        <span className="text-gray-700">{po.products.length} items</span>
-      ),
+      render: (po: PurchaseOrder) => {
+        const firstProduct = po.products?.[0];
+        return (
+          <span className="text-gray-700">
+            {firstProduct?.color || '-'}
+          </span>
+        );
+      },
     },
     {
       header: 'Total Amount',

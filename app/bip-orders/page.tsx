@@ -1199,6 +1199,7 @@ const BipOrdersPage = () => {
           initialProductName={selectedOrderForPO?.product || null}
           initialQuantity={selectedOrderForPO?.qty || null}
           initialGiftCode={selectedOrderForPO?.giftCode || null}
+          initialUnitPrice={selectedOrderForPO ? selectedOrderForPO.amount / selectedOrderForPO.qty : null}
         />
 
         {/* Courier Dispatch Modal */}

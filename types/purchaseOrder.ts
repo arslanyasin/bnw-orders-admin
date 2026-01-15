@@ -9,6 +9,8 @@ export interface PurchaseOrderProduct {
   productName: string;
   bankProductNumber: string;
   unitPrice: number;
+  totalPrice?: number;
+  color?: string;
   serialNumber?: string;
 }
 

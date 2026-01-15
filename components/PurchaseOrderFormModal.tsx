@@ -23,6 +23,7 @@ interface PurchaseOrderFormModalProps {
   initialProductName?: string | null;
   initialQuantity?: number | null;
   initialGiftCode?: string | null;
+  initialUnitPrice?: number | null;
 }
 
 interface ProductItem {
@@ -42,6 +43,7 @@ const PurchaseOrderFormModal: React.FC<PurchaseOrderFormModalProps> = ({
   initialProductName = null,
   initialQuantity = null,
   initialGiftCode = null,
+  initialUnitPrice = null,
 }) => {
   const [vendors, setVendors] = useState<Vendor[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
@@ -62,10 +64,12 @@ const PurchaseOrderFormModal: React.FC<PurchaseOrderFormModalProps> = ({
   ]);
 
   const [error, setError] = useState('');
+  const [hasInitialized, setHasInitialized] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
       fetchData();
+      setHasInitialized(false); // Reset initialization flag when modal opens
     }
   }, [isOpen]);
 
@@ -99,9 +103,17 @@ const PurchaseOrderFormModal: React.FC<PurchaseOrderFormModalProps> = ({
     }
   }, [purchaseOrder]);
 
-  // Handle initial data from Bank/BIP orders
+  // Handle initial data from Bank/BIP orders - Combined initialization and auto-selection
   useEffect(() => {
-    if (isOpen && !purchaseOrder && initialOrderType && initialOrderId) {
+    if (isOpen && !purchaseOrder && !hasInitialized && initialOrderType && initialOrderId && products.length > 0) {
+      console.log('[PO Modal] Initializing with:', {
+        initialQuantity,
+        initialUnitPrice,
+        initialProductName,
+        initialGiftCode,
+        productsLoaded: products.length,
+      });
+
       setFormData({
         vendorId: '',
         orderType: initialOrderType,
@@ -110,27 +122,35 @@ const PurchaseOrderFormModal: React.FC<PurchaseOrderFormModalProps> = ({
         notes: '',
       });
 
-      if (initialQuantity) {
-        setProductItems([{
-          productId: '',
-          quantity: initialQuantity,
-          unitPrice: 0,
-        }]);
-      }
-    }
-  }, [isOpen, initialOrderType, initialOrderId, initialQuantity, purchaseOrder]);
+      // Initialize product items with quantity and price
+      let productId = '';
 
-  // Auto-select product based on giftCode when products are loaded
-  useEffect(() => {
-    if (isOpen && !purchaseOrder && initialGiftCode && products.length > 0 && productItems.length > 0) {
-      const matchingProduct = products.find(p => p.bankProductNumber === initialGiftCode);
-      if (matchingProduct && productItems[0].productId === '') {
-        const newItems = [...productItems];
-        newItems[0] = { ...newItems[0], productId: matchingProduct._id };
-        setProductItems(newItems);
+      // Try to auto-select product
+      if (initialGiftCode) {
+        const matchingProduct = products.find(p => p.bankProductNumber === initialGiftCode);
+        if (matchingProduct) {
+          productId = matchingProduct._id;
+          console.log('[PO Modal] Found product by gift code:', matchingProduct.name);
+        }
+      } else if (initialProductName) {
+        const matchingProduct = products.find(p => p.name === initialProductName);
+        if (matchingProduct) {
+          productId = matchingProduct._id;
+          console.log('[PO Modal] Found product by name:', matchingProduct.name);
+        }
       }
+
+      const newItems = [{
+        productId: productId,
+        quantity: initialQuantity || 1,
+        unitPrice: initialUnitPrice || 0,
+      }];
+
+      console.log('[PO Modal] Setting product items:', newItems);
+      setProductItems(newItems);
+      setHasInitialized(true);
     }
-  }, [isOpen, initialGiftCode, products, purchaseOrder]);
+  }, [isOpen, hasInitialized, initialOrderType, initialOrderId, initialQuantity, initialUnitPrice, initialProductName, initialGiftCode, purchaseOrder, products]);
 
   const fetchData = async () => {
     try {
