@@ -137,7 +137,7 @@ const PurchaseOrderFormModal: React.FC<PurchaseOrderFormModalProps> = ({
       setLoadingData(true);
       const [vendorsRes, productsRes, bankOrdersRes, bipOrdersRes] = await Promise.all([
         vendorService.getAll({ limit: 100 }),
-        productService.getAll({ limit: 100 }),
+        productService.getAll({ limit: 1000 }),
         bankOrderService.getAll({ limit: 100 }),
         bipService.getAll({ limit: 100 }),
       ]);
