@@ -1,4 +1,4 @@
-import { OrderStatus } from './bankOrder';
+import { OrderStatus, StatusHistoryEntry } from './bankOrder';
 
 export interface BipOrder {
   _id: string;
@@ -19,6 +19,7 @@ export interface BipOrder {
   amount: number;
   color: string;
   status: OrderStatus;
+  statusHistory?: StatusHistoryEntry[];
   shipmentId?: {
     _id: string;
     courierId?: {

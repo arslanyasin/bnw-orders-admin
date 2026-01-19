@@ -781,6 +781,29 @@ const BipOrdersPage = () => {
       ),
     },
     {
+      header: 'Status Updated',
+      accessor: 'statusHistory',
+      width: '160px',
+      render: (order: BipOrder) => {
+        const currentStatusHistory = order.statusHistory?.find(
+          (history) => history.status === order.status
+        );
+        return (
+          <span className="text-sm text-gray-600">
+            {currentStatusHistory
+              ? new Date(currentStatusHistory.timestamp).toLocaleString('en-US', {
+                  month: 'short',
+                  day: 'numeric',
+                  year: 'numeric',
+                  hour: '2-digit',
+                  minute: '2-digit',
+                })
+              : '-'}
+          </span>
+        );
+      },
+    },
+    {
       header: 'Actions',
       accessor: '_id',
       width: '230px',

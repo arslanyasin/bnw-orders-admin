@@ -1,5 +1,12 @@
 export type OrderStatus = 'pending' | 'confirmed' | 'processing' | 'dispatched' | 'delivered' | 'cancelled' | 'returned';
 
+export interface StatusHistoryEntry {
+  status: OrderStatus;
+  timestamp: string;
+  _id: string;
+  id: string;
+}
+
 export interface BankOrder {
   _id: string;
   cnic: string;
@@ -18,6 +25,7 @@ export interface BankOrder {
   orderDate: string;
   redeemedPoints: number;
   status: OrderStatus;
+  statusHistory?: StatusHistoryEntry[];
   shipmentId?: {
     _id: string;
     courierId?: {
