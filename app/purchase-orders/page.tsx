@@ -25,6 +25,8 @@ const PurchaseOrdersPage = () => {
   const [statusFilter, setStatusFilter] = useState<'all' | PurchaseOrderStatus>('all');
   const [vendorFilter, setVendorFilter] = useState<string>('all');
   const [vendors, setVendors] = useState<Vendor[]>([]);
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedPO, setSelectedPO] = useState<PurchaseOrder | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -70,7 +72,7 @@ const PurchaseOrdersPage = () => {
   // Fetch purchase orders whenever dependencies change
   useEffect(() => {
     fetchPurchaseOrders();
-  }, [currentPage, pageSize, debouncedSearchTerm, statusFilter, vendorFilter]);
+  }, [currentPage, pageSize, debouncedSearchTerm, statusFilter, vendorFilter, startDate, endDate]);
 
   const fetchPurchaseOrders = async () => {
     try {
@@ -91,6 +93,16 @@ const PurchaseOrdersPage = () => {
 
       if (vendorFilter !== 'all') {
         params.vendorId = vendorFilter;
+      }
+
+      if (startDate) {
+        params.startDate = new Date(startDate).toISOString();
+      }
+
+      if (endDate) {
+        const endDateTime = new Date(endDate);
+        endDateTime.setHours(23, 59, 59, 999);
+        params.endDate = endDateTime.toISOString();
       }
 
       console.log('[Purchase Orders] Fetching with params:', params);
@@ -575,56 +587,152 @@ const PurchaseOrdersPage = () => {
         </div>
 
         <div className="bg-white rounded-lg shadow">
+          {/* Status Tabs */}
+          <div className="border-b border-gray-200">
+            <div className="flex overflow-x-auto">
+              <button
+                onClick={() => setStatusFilter('all')}
+                className={`px-6 py-3 text-sm font-medium whitespace-nowrap border-b-2 transition-colors ${
+                  statusFilter === 'all'
+                    ? 'border-blue-600 text-blue-600'
+                    : 'border-transparent text-gray-600 hover:text-gray-900 hover:border-gray-300'
+                }`}
+              >
+                All Orders
+              </button>
+              <button
+                onClick={() => setStatusFilter('draft')}
+                className={`px-6 py-3 text-sm font-medium whitespace-nowrap border-b-2 transition-colors ${
+                  statusFilter === 'draft'
+                    ? 'border-blue-600 text-blue-600'
+                    : 'border-transparent text-gray-600 hover:text-gray-900 hover:border-gray-300'
+                }`}
+              >
+                Draft
+              </button>
+              <button
+                onClick={() => setStatusFilter('pending')}
+                className={`px-6 py-3 text-sm font-medium whitespace-nowrap border-b-2 transition-colors ${
+                  statusFilter === 'pending'
+                    ? 'border-blue-600 text-blue-600'
+                    : 'border-transparent text-gray-600 hover:text-gray-900 hover:border-gray-300'
+                }`}
+              >
+                Pending
+              </button>
+              <button
+                onClick={() => setStatusFilter('approved')}
+                className={`px-6 py-3 text-sm font-medium whitespace-nowrap border-b-2 transition-colors ${
+                  statusFilter === 'approved'
+                    ? 'border-blue-600 text-blue-600'
+                    : 'border-transparent text-gray-600 hover:text-gray-900 hover:border-gray-300'
+                }`}
+              >
+                Approved
+              </button>
+              <button
+                onClick={() => setStatusFilter('delivered')}
+                className={`px-6 py-3 text-sm font-medium whitespace-nowrap border-b-2 transition-colors ${
+                  statusFilter === 'delivered'
+                    ? 'border-blue-600 text-blue-600'
+                    : 'border-transparent text-gray-600 hover:text-gray-900 hover:border-gray-300'
+                }`}
+              >
+                Delivered
+              </button>
+              <button
+                onClick={() => setStatusFilter('cancelled')}
+                className={`px-6 py-3 text-sm font-medium whitespace-nowrap border-b-2 transition-colors ${
+                  statusFilter === 'cancelled'
+                    ? 'border-blue-600 text-blue-600'
+                    : 'border-transparent text-gray-600 hover:text-gray-900 hover:border-gray-300'
+                }`}
+              >
+                Cancelled
+              </button>
+              <button
+                onClick={() => setStatusFilter('merged')}
+                className={`px-6 py-3 text-sm font-medium whitespace-nowrap border-b-2 transition-colors ${
+                  statusFilter === 'merged'
+                    ? 'border-blue-600 text-blue-600'
+                    : 'border-transparent text-gray-600 hover:text-gray-900 hover:border-gray-300'
+                }`}
+              >
+                Merged
+              </button>
+            </div>
+          </div>
+
           {/* Search and Filters */}
           <div className="p-6 border-b border-gray-200">
-            <div className="flex flex-col md:flex-row gap-4">
-              <div className="flex-1 relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
-                <input
-                  type="text"
-                  placeholder="Search purchase orders..."
-                  className="w-full pl-10 pr-10 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
-                {searchTerm !== debouncedSearchTerm && (
-                  <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
-                  </div>
+            <div className="flex flex-col gap-4">
+              <div className="flex flex-col md:flex-row gap-4">
+                <div className="flex-1 relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+                  <input
+                    type="text"
+                    placeholder="Search purchase orders..."
+                    className="w-full pl-10 pr-10 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                  />
+                  {searchTerm !== debouncedSearchTerm && (
+                    <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+                    </div>
+                  )}
+                </div>
+                <div className="flex items-center gap-2">
+                  <label className="text-sm text-gray-600 whitespace-nowrap">Vendor:</label>
+                  <select
+                    className="px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white min-w-[180px]"
+                    value={vendorFilter}
+                    onChange={(e) => setVendorFilter(e.target.value)}
+                  >
+                    <option value="all">All Vendors</option>
+                    {vendors.map((vendor) => (
+                      <option key={vendor._id} value={vendor._id}>
+                        {vendor.vendorName}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              {/* Date Range Filters */}
+              <div className="flex flex-wrap items-center gap-4">
+                <div className="flex items-center gap-2">
+                  <label className="text-sm text-gray-600 whitespace-nowrap">Start Date:</label>
+                  <input
+                    type="date"
+                    className="px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
+                    value={startDate}
+                    onChange={(e) => setStartDate(e.target.value)}
+                  />
+                </div>
+                <div className="flex items-center gap-2">
+                  <label className="text-sm text-gray-600 whitespace-nowrap">End Date:</label>
+                  <input
+                    type="date"
+                    className="px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
+                    value={endDate}
+                    onChange={(e) => setEndDate(e.target.value)}
+                  />
+                </div>
+                {(startDate || endDate) && (
+                  <button
+                    onClick={() => {
+                      setStartDate('');
+                      setEndDate('');
+                    }}
+                    className="text-sm text-blue-600 hover:text-blue-800 font-medium"
+                  >
+                    Clear Dates
+                  </button>
                 )}
               </div>
-              <div className="flex items-center gap-2">
-                <label className="text-sm text-gray-600 whitespace-nowrap">Status:</label>
-                <select
-                  className="px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white min-w-[140px]"
-                  value={statusFilter}
-                  onChange={(e) => setStatusFilter(e.target.value as any)}
-                >
-                  <option value="all">All Status</option>
-                  <option value="draft">Draft</option>
-                  <option value="pending">Pending</option>
-                  <option value="approved">Approved</option>
-                  <option value="delivered">Delivered</option>
-                  <option value="cancelled">Cancelled</option>
-                  <option value="merged">Merged</option>
-                </select>
-              </div>
-              <div className="flex items-center gap-2">
-                <label className="text-sm text-gray-600 whitespace-nowrap">Vendor:</label>
-                <select
-                  className="px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white min-w-[180px]"
-                  value={vendorFilter}
-                  onChange={(e) => setVendorFilter(e.target.value)}
-                >
-                  <option value="all">All Vendors</option>
-                  {vendors.map((vendor) => (
-                    <option key={vendor._id} value={vendor._id}>
-                      {vendor.vendorName}
-                    </option>
-                  ))}
-                </select>
-              </div>
             </div>
+
             {debouncedSearchTerm && (
               <div className="mt-3 flex items-center gap-2">
                 <span className="text-sm text-gray-600">
