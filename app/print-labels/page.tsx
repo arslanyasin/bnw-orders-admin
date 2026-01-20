@@ -132,22 +132,31 @@ const PrintLabelsContent = () => {
           }
           .print-labels-container {
             width: 100%;
-            height: 100%;
+          }
+          .labels-content {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            padding: 10px;
           }
           iframe {
-            page-break-after: always;
-            display: block;
             width: 100%;
-            height: 100vh;
+            height: 400px;
             border: none;
+            page-break-inside: avoid;
           }
         }
         @media screen {
+          .labels-content {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            padding: 1rem;
+          }
           iframe {
             width: 100%;
-            height: 100vh;
+            height: 500px;
             border: 1px solid #e5e7eb;
-            margin-bottom: 1rem;
           }
         }
       `}</style>
