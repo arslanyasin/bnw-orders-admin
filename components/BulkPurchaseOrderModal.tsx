@@ -36,7 +36,7 @@ const BulkPurchaseOrderModal: React.FC<BulkPurchaseOrderModalProps> = ({
   const fetchVendors = async () => {
     try {
       setIsLoadingVendors(true);
-      const response = await vendorService.getAll();
+      const response = await vendorService.getAll({ limit: 100 });
       setVendors(response.data || []);
     } catch (error) {
       console.error('Failed to fetch vendors:', error);
