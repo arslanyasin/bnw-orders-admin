@@ -109,15 +109,25 @@ const BankOrdersPage = () => {
         params.status = statusFilter;
       }
 
+      // Use different date parameter names based on status filter
       if (startDate) {
-        params.startDate = new Date(startDate).toISOString();
+        if (statusFilter === 'all') {
+          params.startDate = new Date(startDate).toISOString();
+        } else {
+          params.statusStartDate = new Date(startDate).toISOString();
+        }
       }
 
       if (endDate) {
         // Set to end of day for endDate
         const endDateTime = new Date(endDate);
         endDateTime.setHours(23, 59, 59, 999);
-        params.endDate = endDateTime.toISOString();
+
+        if (statusFilter === 'all') {
+          params.endDate = endDateTime.toISOString();
+        } else {
+          params.statusEndDate = endDateTime.toISOString();
+        }
       }
 
       console.log('[Bank Orders] Fetching with params:', params);
@@ -171,11 +181,59 @@ const BankOrdersPage = () => {
       setIsImporting(true);
       console.log('Importing orders:', { bankId, fileName: file.name });
 
-      await bankOrderService.import(bankId, file);
+      const response = await bankOrderService.import(bankId, file);
 
       setIsImportModalOpen(false);
       fetchOrders(); // Refresh the list
-      alert('Orders imported successfully!');
+
+      // Show import results
+      if (response.data) {
+        const { totalRows, successCount, failedCount, failedRecords } = response.data;
+
+        if (failedCount > 0) {
+          // Build detailed error message
+          let errorMessage = `Import completed!\n\n`;
+          errorMessage += `Summary:\n`;
+          errorMessage += `• Total: ${totalRows} rows\n`;
+          errorMessage += `• Success: ${successCount}\n`;
+          errorMessage += `• Failed: ${failedCount}\n\n`;
+
+          if (failedRecords && failedRecords.length > 0) {
+            errorMessage += `Failed Rows:\n`;
+
+            // Show first 10 errors
+            const errorsToShow = failedRecords.slice(0, 10);
+            errorsToShow.forEach((record) => {
+              const errorText = record.errors.join(', ');
+              errorMessage += `• Row ${record.row}: ${errorText}\n`;
+            });
+
+            // If there are more errors, show count
+            if (failedRecords.length > 10) {
+              errorMessage += `\n... and ${failedRecords.length - 10} more errors`;
+            }
+          }
+
+          alert(errorMessage);
+
+          // Log all errors to console for detailed inspection
+          if (failedRecords && failedRecords.length > 0) {
+            console.group('Import Errors - Detailed View');
+            console.log('Total Failed Records:', failedCount);
+            failedRecords.forEach((record) => {
+              console.group(`Row ${record.row}`);
+              console.log('Data:', record.data);
+              console.log('Errors:', record.errors);
+              console.groupEnd();
+            });
+            console.groupEnd();
+          }
+        } else {
+          alert(`Successfully imported ${successCount} order${successCount !== 1 ? 's' : ''}!`);
+        }
+      } else {
+        alert('Orders imported successfully!');
+      }
     } catch (error: any) {
       console.error('Import failed:', error);
       alert(error.message || 'Failed to import orders');

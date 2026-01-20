@@ -29,3 +29,15 @@ export interface SelectOption {
   label: string;
   value: string | number;
 }
+
+export interface ImportResult {
+  totalRows: number;
+  successCount: number;
+  failedCount: number;
+  successRecords?: any[];
+  failedRecords?: Array<{
+    row: number;
+    data: any;
+    errors: string[];
+  }>;
+}

@@ -5,6 +5,7 @@ import {
   UpdateBankOrderDto,
   ApiResponse,
   PaginatedResponse,
+  ImportResult,
 } from '@/types';
 
 export const bankOrderService = {
@@ -16,6 +17,10 @@ export const bankOrderService = {
     sortBy?: string;
     sortOrder?: string;
     status?: string;
+    startDate?: string;
+    endDate?: string;
+    statusStartDate?: string;
+    statusEndDate?: string;
   }): Promise<PaginatedResponse<BankOrder>> => {
     const response = await apiClient.get<PaginatedResponse<BankOrder>>('/bank-orders', {
       params,
@@ -48,11 +53,11 @@ export const bankOrderService = {
     return response.data;
   },
 
-  import: async (bankId: string, file: File): Promise<ApiResponse> => {
+  import: async (bankId: string, file: File): Promise<ApiResponse<ImportResult>> => {
     const formData = new FormData();
     formData.append('file', file);
 
-    const response = await apiClient.post<ApiResponse>(
+    const response = await apiClient.post<ApiResponse<ImportResult>>(
       `/bank-orders/import?bankId=${bankId}`,
       formData,
       {
