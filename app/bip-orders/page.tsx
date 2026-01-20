@@ -66,6 +66,10 @@ const BipOrdersPage = () => {
   const [selectedOrderForEdit, setSelectedOrderForEdit] = useState<BipOrder | null>(null);
   const [isUpdating, setIsUpdating] = useState(false);
 
+  // Print labels mode state
+  const [isPrintLabelsMode, setIsPrintLabelsMode] = useState(false);
+  const [selectedOrdersForLabels, setSelectedOrdersForLabels] = useState<string[]>([]);
+
   // Debounce search term
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -295,6 +299,8 @@ const BipOrdersPage = () => {
     setSelectedOrdersForBulkPO([]);
     setIsWhatsAppMode(false);
     setSelectedOrdersForWhatsApp([]);
+    setIsPrintLabelsMode(false);
+    setSelectedOrdersForLabels([]);
   };
 
   const handleToggleBulkPOMode = () => {
@@ -304,6 +310,8 @@ const BipOrdersPage = () => {
     setSelectedOrdersForPrint([]);
     setIsWhatsAppMode(false);
     setSelectedOrdersForWhatsApp([]);
+    setIsPrintLabelsMode(false);
+    setSelectedOrdersForLabels([]);
   };
 
   const handleToggleWhatsAppMode = () => {
@@ -313,6 +321,19 @@ const BipOrdersPage = () => {
     setSelectedOrdersForPrint([]);
     setIsBulkPOMode(false);
     setSelectedOrdersForBulkPO([]);
+    setIsPrintLabelsMode(false);
+    setSelectedOrdersForLabels([]);
+  };
+
+  const handleTogglePrintLabelsMode = () => {
+    setIsPrintLabelsMode(!isPrintLabelsMode);
+    setSelectedOrdersForLabels([]);
+    setIsPrintChallanMode(false);
+    setSelectedOrdersForPrint([]);
+    setIsBulkPOMode(false);
+    setSelectedOrdersForBulkPO([]);
+    setIsWhatsAppMode(false);
+    setSelectedOrdersForWhatsApp([]);
   };
 
   const handlePrintMultipleChallans = () => {
@@ -336,6 +357,35 @@ const BipOrdersPage = () => {
     router.push(`/print-challans?type=bip&ids=${encodeURIComponent(orderIds)}`);
   };
 
+  const handlePrintMultipleLabels = () => {
+    if (selectedOrdersForLabels.length === 0) {
+      alert('Please select at least one order');
+      return;
+    }
+
+    // Get selected orders with shipment IDs
+    const selectedOrders = orders.filter(order =>
+      selectedOrdersForLabels.includes(order._id) && order.shipmentId
+    );
+
+    if (selectedOrders.length === 0) {
+      alert('No dispatched orders available for selected orders');
+      return;
+    }
+
+    // Pass bip order IDs to print labels page
+    const orderIds = selectedOrders.map(order => order._id).join(',');
+    router.push(`/print-labels?type=bip&ids=${encodeURIComponent(orderIds)}`);
+  };
+
+  const handleToggleLabelSelection = (orderId: string) => {
+    setSelectedOrdersForLabels((prev) =>
+      prev.includes(orderId)
+        ? prev.filter((id) => id !== orderId)
+        : [...prev, orderId]
+    );
+  };
+
   const handleToggleOrderSelection = (orderId: string) => {
     setSelectedOrdersForPrint((prev) =>
       prev.includes(orderId)
@@ -353,6 +403,15 @@ const BipOrdersPage = () => {
         setSelectedOrdersForPrint([]);
       } else {
         setSelectedOrdersForPrint(ordersWithChallans.map(order => order._id));
+      }
+    } else if (isPrintLabelsMode) {
+      // Only select orders that have shipment IDs (dispatched orders)
+      const ordersWithLabels = orders.filter(order => order.shipmentId);
+
+      if (selectedOrdersForLabels.length === ordersWithLabels.length) {
+        setSelectedOrdersForLabels([]);
+      } else {
+        setSelectedOrdersForLabels(ordersWithLabels.map(order => order._id));
       }
     } else if (isBulkPOMode) {
       // Only select orders with the same product
@@ -575,7 +634,7 @@ const BipOrdersPage = () => {
   };
 
   // Create columns array with conditional checkbox column
-  const checkboxColumn = isPrintChallanMode || isBulkPOMode || isWhatsAppMode
+  const checkboxColumn = isPrintChallanMode || isPrintLabelsMode || isBulkPOMode || isWhatsAppMode
     ? {
         header: (
           <input
@@ -584,6 +643,9 @@ const BipOrdersPage = () => {
               isPrintChallanMode
                 ? orders.filter(o => o.deliveryChallan).length > 0 &&
                   selectedOrdersForPrint.length === orders.filter(o => o.deliveryChallan).length
+                : isPrintLabelsMode
+                ? orders.filter(o => o.shipmentId).length > 0 &&
+                  selectedOrdersForLabels.length === orders.filter(o => o.shipmentId).length
                 : isBulkPOMode
                 ? getEligibleOrdersForBulkPO().length > 0 &&
                   selectedOrdersForBulkPO.length === getEligibleOrdersForBulkPO().length
@@ -599,24 +661,32 @@ const BipOrdersPage = () => {
         render: (order: BipOrder) => {
           const isDisabled = isPrintChallanMode
             ? !order.deliveryChallan
+            : isPrintLabelsMode
+            ? !order.shipmentId
             : isBulkPOMode
             ? !isOrderEligibleForBulkPO(order)
             : false;
 
           const isChecked = isPrintChallanMode
             ? selectedOrdersForPrint.includes(order._id)
+            : isPrintLabelsMode
+            ? selectedOrdersForLabels.includes(order._id)
             : isBulkPOMode
             ? selectedOrdersForBulkPO.includes(order._id)
             : selectedOrdersForWhatsApp.includes(order._id);
 
           const handleChange = isPrintChallanMode
             ? handleToggleOrderSelection
+            : isPrintLabelsMode
+            ? handleToggleLabelSelection
             : isBulkPOMode
             ? handleToggleBulkPOSelection
             : handleToggleWhatsAppSelection;
 
           const title = isPrintChallanMode
             ? (!order.deliveryChallan ? 'No delivery challan available' : '')
+            : isPrintLabelsMode
+            ? (!order.shipmentId ? 'Order not dispatched' : '')
             : isBulkPOMode
             ? (!isOrderEligibleForBulkPO(order) ? 'No other orders with same product' : '')
             : '';
@@ -919,6 +989,23 @@ const BipOrdersPage = () => {
                   Print Selected ({selectedOrdersForPrint.length})
                 </Button>
               </>
+            ) : isPrintLabelsMode ? (
+              <>
+                <span className="text-sm text-gray-600">
+                  {selectedOrdersForLabels.length} order{selectedOrdersForLabels.length !== 1 ? 's' : ''} selected
+                </span>
+                <Button variant="outline" onClick={handleTogglePrintLabelsMode}>
+                  Cancel
+                </Button>
+                <Button
+                  variant="primary"
+                  onClick={handlePrintMultipleLabels}
+                  disabled={selectedOrdersForLabels.length === 0}
+                >
+                  <Printer size={20} className="mr-2" />
+                  Print Labels ({selectedOrdersForLabels.length})
+                </Button>
+              </>
             ) : isBulkPOMode ? (
               <>
                 <span className="text-sm text-gray-600">
@@ -975,6 +1062,13 @@ const BipOrdersPage = () => {
                 >
                   <Printer size={20} className="mr-2" />
                   Print Challans
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={handleTogglePrintLabelsMode}
+                >
+                  <Printer size={20} className="mr-2" />
+                  Print Labels
                 </Button>
                 <Button
                   variant="primary"
