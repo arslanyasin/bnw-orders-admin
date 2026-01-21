@@ -770,19 +770,6 @@ const BankOrdersPage = () => {
   const baseColumns = [
     {
       header: (
-        <button
-          onClick={() => handleSort('poNumber')}
-          className="flex items-center hover:text-blue-600 transition-colors"
-        >
-          PO Number
-          {getSortIcon('poNumber')}
-        </button>
-      ),
-      accessor: 'poNumber',
-      width: '140px',
-    },
-    {
-      header: (
           <button
               onClick={() => handleSort('orderDate')}
               className="flex items-center hover:text-blue-600 transition-colors"
@@ -792,7 +779,7 @@ const BankOrdersPage = () => {
           </button>
       ),
       accessor: 'orderDate',
-      width: '120px',
+      width: '140px',
       render: (order: BankOrder) => new Date(order.orderDate).toLocaleDateString(),
     },
     {
@@ -806,12 +793,7 @@ const BankOrdersPage = () => {
         </button>
       ),
       accessor: 'customerName',
-      width: '180px',
-    },
-    {
-      header: 'CNIC',
-      accessor: 'cnic',
-      width: '140px',
+      width: '200px',
     },
     {
       header: (
@@ -824,53 +806,12 @@ const BankOrdersPage = () => {
         </button>
       ),
       accessor: 'product',
-      width: '250px',
-    },
-    {
-      header: 'Gift Code',
-      accessor: 'giftCode',
-      width: '100px',
-    },
-    {
-      header: 'Qty',
-      accessor: 'qty',
-      width: '60px',
-    },
-    {
-      header: (
-        <button
-          onClick={() => handleSort('city')}
-          className="flex items-center hover:text-blue-600 transition-colors"
-        >
-          City
-          {getSortIcon('city')}
-        </button>
-      ),
-      accessor: 'city',
-      width: '120px',
+      width: '280px',
     },
     {
       header: 'Mobile',
       accessor: 'mobile1',
-      width: '130px',
-    },
-    {
-      header: (
-        <button
-          onClick={() => handleSort('redeemedPoints')}
-          className="flex items-center hover:text-blue-600 transition-colors"
-        >
-          Points
-          {getSortIcon('redeemedPoints')}
-        </button>
-      ),
-      accessor: 'redeemedPoints',
-      width: '120px',
-      render: (order: BankOrder) => (
-        <span className="text-red-600 font-medium">
-          {formatPoints(order.redeemedPoints)}
-        </span>
-      ),
+      width: '140px',
     },
     {
       header: 'Status',

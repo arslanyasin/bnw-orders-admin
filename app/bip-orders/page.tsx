@@ -769,22 +769,18 @@ const BipOrdersPage = () => {
 
   const baseColumns = [
     {
-      header: 'EFORMS',
-      accessor: 'eforms',
-      width: '120px',
-    },
-    {
       header: (
         <button
-          onClick={() => handleSort('poNumber')}
+          onClick={() => handleSort('orderDate')}
           className="flex items-center hover:text-blue-600 transition-colors"
         >
-          PO Number
-          {getSortIcon('poNumber')}
+          Order Date
+          {getSortIcon('orderDate')}
         </button>
       ),
-      accessor: 'poNumber',
+      accessor: 'orderDate',
       width: '140px',
+      render: (order: BipOrder) => new Date(order.orderDate).toLocaleDateString(),
     },
     {
       header: (
@@ -797,17 +793,7 @@ const BipOrdersPage = () => {
         </button>
       ),
       accessor: 'customerName',
-      width: '180px',
-    },
-    {
-      header: 'CNIC',
-      accessor: 'cnic',
-      width: '140px',
-    },
-    {
-      header: 'Mobile',
-      accessor: 'mobile1',
-      width: '130px',
+      width: '200px',
     },
     {
       header: (
@@ -820,67 +806,12 @@ const BipOrdersPage = () => {
         </button>
       ),
       accessor: 'product',
-      width: '200px',
+      width: '280px',
     },
     {
-      header: 'Gift Code',
-      accessor: 'giftCode',
-      width: '100px',
-    },
-    {
-      header: 'Qty',
-      accessor: 'qty',
-      width: '60px',
-    },
-    {
-      header: (
-        <button
-          onClick={() => handleSort('city')}
-          className="flex items-center hover:text-blue-600 transition-colors"
-        >
-          City
-          {getSortIcon('city')}
-        </button>
-      ),
-      accessor: 'city',
-      width: '120px',
-    },
-    {
-      header: (
-        <button
-          onClick={() => handleSort('amount')}
-          className="flex items-center hover:text-blue-600 transition-colors"
-        >
-          Amount
-          {getSortIcon('amount')}
-        </button>
-      ),
-      accessor: 'amount',
-      width: '120px',
-      render: (order: BipOrder) => (
-        <span className="text-green-600 font-medium">
-          {formatAmount(order.amount)}
-        </span>
-      ),
-    },
-    {
-      header: 'Color',
-      accessor: 'color',
-      width: '100px',
-    },
-    {
-      header: (
-        <button
-          onClick={() => handleSort('orderDate')}
-          className="flex items-center hover:text-blue-600 transition-colors"
-        >
-          Order Date
-          {getSortIcon('orderDate')}
-        </button>
-      ),
-      accessor: 'orderDate',
-      width: '120px',
-      render: (order: BipOrder) => new Date(order.orderDate).toLocaleDateString(),
+      header: 'Mobile',
+      accessor: 'mobile1',
+      width: '140px',
     },
     {
       header: 'Status',
