@@ -1,4 +1,4 @@
-export type OrderStatus = 'pending' | 'confirmed' | 'processing' | 'dispatched' | 'delivered' | 'cancelled' | 'returned';
+export type OrderStatus = 'pending' | 'confirmed' | 'processing' | 'dispatched' | 'shipped' | 'delivered' | 'cancelled' | 'returned';
 
 export interface StatusHistoryEntry {
   status: OrderStatus;

@@ -901,6 +901,7 @@ const BipOrdersPage = () => {
             <option value="confirmed">Confirmed</option>
             <option value="processing">Processing</option>
             <option value="dispatched">Dispatched</option>
+            <option value="shipped">Shipped</option>
             <option value="delivered">Delivered</option>
             <option value="cancelled">Cancelled</option>
             <option value="returned">Returned</option>
@@ -1193,6 +1194,16 @@ const BipOrdersPage = () => {
                 }`}
               >
                 Dispatched
+              </button>
+              <button
+                onClick={() => setStatusFilter('shipped')}
+                className={`px-6 py-3 text-sm font-medium whitespace-nowrap border-b-2 transition-colors ${
+                  statusFilter === 'shipped'
+                    ? 'border-blue-600 text-blue-600'
+                    : 'border-transparent text-gray-600 hover:text-gray-900 hover:border-gray-300'
+                }`}
+              >
+                Shipped
               </button>
               <button
                 onClick={() => setStatusFilter('delivered')}
