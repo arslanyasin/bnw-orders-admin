@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import AdminLayout from '@/components/AdminLayout';
-import { Button, Table, Badge, Loader, EditOrderModal } from '@/components';
+import { Button, Table, Badge, Loader, EditOrderModal, CommentModal } from '@/components';
 import ImportOrdersModal from '@/components/ImportOrdersModal';
 import PurchaseOrderFormModal from '@/components/PurchaseOrderFormModal';
 import CourierDispatchModal from '@/components/CourierDispatchModal';
@@ -65,6 +65,11 @@ const BankOrdersPage = () => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedOrderForEdit, setSelectedOrderForEdit] = useState<BankOrder | null>(null);
   const [isUpdating, setIsUpdating] = useState(false);
+
+  // Comment modal state
+  const [isCommentModalOpen, setIsCommentModalOpen] = useState(false);
+  const [selectedOrderForComment, setSelectedOrderForComment] = useState<BankOrder | null>(null);
+  const [isAddingComment, setIsAddingComment] = useState(false);
 
   // Print labels mode state
   const [isPrintLabelsMode, setIsPrintLabelsMode] = useState(false);
@@ -691,6 +696,32 @@ const BankOrdersPage = () => {
     }
   };
 
+  const handleOpenCommentModal = (order: BankOrder) => {
+    setSelectedOrderForComment(order);
+    setIsCommentModalOpen(true);
+  };
+
+  const handleCloseCommentModal = () => {
+    setIsCommentModalOpen(false);
+    setSelectedOrderForComment(null);
+  };
+
+  const handleSubmitComment = async (comment: string) => {
+    if (!selectedOrderForComment) return;
+
+    try {
+      setIsAddingComment(true);
+      await bankOrderService.addComment(selectedOrderForComment._id, comment);
+
+      handleCloseCommentModal();
+      alert('Comment added successfully!');
+    } catch (error: any) {
+      alert(error.message || 'Failed to add comment');
+    } finally {
+      setIsAddingComment(false);
+    }
+  };
+
   // Create columns array with conditional checkbox column
   const checkboxColumn = isPrintChallanMode || isPrintLabelsMode || isBulkPOMode || isWhatsAppMode
     ? {
@@ -935,6 +966,16 @@ const BankOrdersPage = () => {
               <FileText size={18} />
             </button>
           )}
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              handleOpenCommentModal(order);
+            }}
+            className="text-gray-600 hover:text-gray-800"
+            title="Add Comment"
+          >
+            <MessageCircle size={18} />
+          </button>
           <button
             onClick={(e) => {
               e.stopPropagation();
@@ -1436,6 +1477,15 @@ const BankOrdersPage = () => {
           onSubmit={handleSubmitEdit}
           isLoading={isUpdating}
           order={selectedOrderForEdit}
+        />
+
+        {/* Comment Modal */}
+        <CommentModal
+          isOpen={isCommentModalOpen}
+          onClose={handleCloseCommentModal}
+          onSubmit={handleSubmitComment}
+          isLoading={isAddingComment}
+          title="Add Comment"
         />
       </div>
     </AdminLayout>

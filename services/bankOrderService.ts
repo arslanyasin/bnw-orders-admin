@@ -68,4 +68,12 @@ export const bankOrderService = {
     );
     return response.data;
   },
+
+  addComment: async (id: string, comment: string): Promise<ApiResponse> => {
+    const response = await apiClient.post<ApiResponse>(
+      `/bank-orders/${id}/comments`,
+      { comment }
+    );
+    return response.data;
+  },
 };

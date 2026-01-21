@@ -68,4 +68,12 @@ export const bipService = {
     );
     return response.data;
   },
+
+  addComment: async (id: string, comment: string): Promise<ApiResponse> => {
+    const response = await apiClient.post<ApiResponse>(
+      `/bip/${id}/comments`,
+      { comment }
+    );
+    return response.data;
+  },
 };

@@ -8,3 +8,4 @@ export { default as SelectableTable } from './SelectableTable';
 export { default as CombinedPOPreviewModal } from './CombinedPOPreviewModal';
 export { default as EditOrderModal } from './EditOrderModal';
 export { default as EditBipOrderModal } from './EditBipOrderModal';
+export { default as CommentModal } from './CommentModal';

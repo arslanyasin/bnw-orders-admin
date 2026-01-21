@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import AdminLayout from '@/components/AdminLayout';
-import { Button, Table, Loader, EditBipOrderModal } from '@/components';
+import { Button, Table, Loader, EditBipOrderModal, CommentModal } from '@/components';
 import ImportBipOrdersModal from '@/components/ImportBipOrdersModal';
 import PurchaseOrderFormModal from '@/components/PurchaseOrderFormModal';
 import CourierDispatchModal from '@/components/CourierDispatchModal';
@@ -65,6 +65,11 @@ const BipOrdersPage = () => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedOrderForEdit, setSelectedOrderForEdit] = useState<BipOrder | null>(null);
   const [isUpdating, setIsUpdating] = useState(false);
+
+  // Comment modal state
+  const [isCommentModalOpen, setIsCommentModalOpen] = useState(false);
+  const [selectedOrderForComment, setSelectedOrderForComment] = useState<BipOrder | null>(null);
+  const [isAddingComment, setIsAddingComment] = useState(false);
 
   // Print labels mode state
   const [isPrintLabelsMode, setIsPrintLabelsMode] = useState(false);
@@ -664,6 +669,32 @@ const BipOrdersPage = () => {
     }
   };
 
+  const handleOpenCommentModal = (order: BipOrder) => {
+    setSelectedOrderForComment(order);
+    setIsCommentModalOpen(true);
+  };
+
+  const handleCloseCommentModal = () => {
+    setIsCommentModalOpen(false);
+    setSelectedOrderForComment(null);
+  };
+
+  const handleSubmitComment = async (comment: string) => {
+    if (!selectedOrderForComment) return;
+
+    try {
+      setIsAddingComment(true);
+      await bipService.addComment(selectedOrderForComment._id, comment);
+
+      handleCloseCommentModal();
+      alert('Comment added successfully!');
+    } catch (error: any) {
+      alert(error.message || 'Failed to add comment');
+    } finally {
+      setIsAddingComment(false);
+    }
+  };
+
   const handleSort = (field: SortField) => {
     if (sortField === field) {
       setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
@@ -935,6 +966,16 @@ const BipOrdersPage = () => {
               <FileText size={18} />
             </button>
           )}
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              handleOpenCommentModal(order);
+            }}
+            className="text-gray-600 hover:text-gray-800"
+            title="Add Comment"
+          >
+            <MessageCircle size={18} />
+          </button>
           <button
             onClick={(e) => {
               e.stopPropagation();
@@ -1432,6 +1473,15 @@ const BipOrdersPage = () => {
           onSubmit={handleSubmitEdit}
           isLoading={isUpdating}
           order={selectedOrderForEdit}
+        />
+
+        {/* Comment Modal */}
+        <CommentModal
+          isOpen={isCommentModalOpen}
+          onClose={handleCloseCommentModal}
+          onSubmit={handleSubmitComment}
+          isLoading={isAddingComment}
+          title="Add Comment"
         />
       </div>
     </AdminLayout>
