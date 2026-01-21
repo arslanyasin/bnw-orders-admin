@@ -16,6 +16,8 @@ export const purchaseOrderService = {
     search?: string;
     status?: string;
     vendorId?: string;
+    startDate?: string;
+    endDate?: string;
   }): Promise<PaginatedResponse<PurchaseOrder>> => {
     const response = await apiClient.get<PaginatedResponse<PurchaseOrder>>('/purchase-orders', {
       params,
