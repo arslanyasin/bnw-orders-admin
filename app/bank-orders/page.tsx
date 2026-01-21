@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import AdminLayout from '@/components/AdminLayout';
-import { Button, Table, Badge, Loader, EditOrderModal, CommentModal } from '@/components';
+import { Button, Table, Badge, Loader, EditOrderModal, CommentModal, BankOrderDetailModal } from '@/components';
 import ImportOrdersModal from '@/components/ImportOrdersModal';
 import PurchaseOrderFormModal from '@/components/PurchaseOrderFormModal';
 import CourierDispatchModal from '@/components/CourierDispatchModal';
@@ -70,6 +70,10 @@ const BankOrdersPage = () => {
   const [isCommentModalOpen, setIsCommentModalOpen] = useState(false);
   const [selectedOrderForComment, setSelectedOrderForComment] = useState<BankOrder | null>(null);
   const [isAddingComment, setIsAddingComment] = useState(false);
+
+  // Detail modal state
+  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
+  const [selectedOrderForDetail, setSelectedOrderForDetail] = useState<BankOrder | null>(null);
 
   // Print labels mode state
   const [isPrintLabelsMode, setIsPrintLabelsMode] = useState(false);
@@ -722,6 +726,28 @@ const BankOrdersPage = () => {
     }
   };
 
+  const handleOpenDetailModal = (order: BankOrder) => {
+    setSelectedOrderForDetail(order);
+    setIsDetailModalOpen(true);
+  };
+
+  const handleCloseDetailModal = () => {
+    setIsDetailModalOpen(false);
+    setSelectedOrderForDetail(null);
+  };
+
+  const handleAddCommentFromDetail = async (orderId: string, comment: string) => {
+    try {
+      setIsAddingComment(true);
+      await bankOrderService.addComment(orderId, comment);
+      alert('Comment added successfully!');
+    } catch (error: any) {
+      alert(error.message || 'Failed to add comment');
+    } finally {
+      setIsAddingComment(false);
+    }
+  };
+
   // Create columns array with conditional checkbox column
   const checkboxColumn = isPrintChallanMode || isPrintLabelsMode || isBulkPOMode || isWhatsAppMode
     ? {
@@ -903,7 +929,7 @@ const BankOrdersPage = () => {
           <button
             onClick={(e) => {
               e.stopPropagation();
-              router.push(`/bank-orders/${order._id}`);
+              handleOpenDetailModal(order);
             }}
             className="text-blue-600 hover:text-blue-800"
             title="View Details"
@@ -1486,6 +1512,15 @@ const BankOrdersPage = () => {
           onSubmit={handleSubmitComment}
           isLoading={isAddingComment}
           title="Add Comment"
+        />
+
+        {/* Order Detail Modal */}
+        <BankOrderDetailModal
+          isOpen={isDetailModalOpen}
+          onClose={handleCloseDetailModal}
+          order={selectedOrderForDetail}
+          onAddComment={handleAddCommentFromDetail}
+          isAddingComment={isAddingComment}
         />
       </div>
     </AdminLayout>

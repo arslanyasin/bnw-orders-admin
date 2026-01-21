@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import AdminLayout from '@/components/AdminLayout';
-import { Button, Table, Loader, EditBipOrderModal, CommentModal } from '@/components';
+import { Button, Table, Loader, EditBipOrderModal, CommentModal, BipOrderDetailModal } from '@/components';
 import ImportBipOrdersModal from '@/components/ImportBipOrdersModal';
 import PurchaseOrderFormModal from '@/components/PurchaseOrderFormModal';
 import CourierDispatchModal from '@/components/CourierDispatchModal';
@@ -70,6 +70,10 @@ const BipOrdersPage = () => {
   const [isCommentModalOpen, setIsCommentModalOpen] = useState(false);
   const [selectedOrderForComment, setSelectedOrderForComment] = useState<BipOrder | null>(null);
   const [isAddingComment, setIsAddingComment] = useState(false);
+
+  // Detail modal state
+  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
+  const [selectedOrderForDetail, setSelectedOrderForDetail] = useState<BipOrder | null>(null);
 
   // Print labels mode state
   const [isPrintLabelsMode, setIsPrintLabelsMode] = useState(false);
@@ -695,6 +699,28 @@ const BipOrdersPage = () => {
     }
   };
 
+  const handleOpenDetailModal = (order: BipOrder) => {
+    setSelectedOrderForDetail(order);
+    setIsDetailModalOpen(true);
+  };
+
+  const handleCloseDetailModal = () => {
+    setIsDetailModalOpen(false);
+    setSelectedOrderForDetail(null);
+  };
+
+  const handleAddCommentFromDetail = async (orderId: string, comment: string) => {
+    try {
+      setIsAddingComment(true);
+      await bipService.addComment(orderId, comment);
+      alert('Comment added successfully!');
+    } catch (error: any) {
+      alert(error.message || 'Failed to add comment');
+    } finally {
+      setIsAddingComment(false);
+    }
+  };
+
   const handleSort = (field: SortField) => {
     if (sortField === field) {
       setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
@@ -903,7 +929,7 @@ const BipOrdersPage = () => {
           <button
             onClick={(e) => {
               e.stopPropagation();
-              router.push(`/bip-orders/${order._id}`);
+              handleOpenDetailModal(order);
             }}
             className="text-blue-600 hover:text-blue-800"
             title="View Details"
@@ -1482,6 +1508,15 @@ const BipOrdersPage = () => {
           onSubmit={handleSubmitComment}
           isLoading={isAddingComment}
           title="Add Comment"
+        />
+
+        {/* Order Detail Modal */}
+        <BipOrderDetailModal
+          isOpen={isDetailModalOpen}
+          onClose={handleCloseDetailModal}
+          order={selectedOrderForDetail}
+          onAddComment={handleAddCommentFromDetail}
+          isAddingComment={isAddingComment}
         />
       </div>
     </AdminLayout>
