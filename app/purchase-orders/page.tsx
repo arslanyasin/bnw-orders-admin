@@ -372,20 +372,34 @@ const PurchaseOrdersPage = () => {
 
   const columns = [
     {
-      header: 'PO ID',
-      accessor: '_id',
-      width: '150px',
-      render: (po: PurchaseOrder) => (
-        <span className="font-mono text-xs text-gray-600">{po._id.substring(0, 8)}...</span>
-      ),
-    },
-    {
       header: 'PO #',
       accessor: 'poNumber',
       width: '150px',
       render: (po: PurchaseOrder) => (
         <span className="font-mono text-xs text-gray-600">{po.poNumber}</span>
       ),
+    },
+    {
+      header: 'Bank PO',
+      accessor: 'bankOrderId',
+      width: '150px',
+      render: (po: PurchaseOrder) => {
+        if (po.bankOrderId && typeof po.bankOrderId === 'object') {
+          return <span className="text-sm text-gray-900">{po.bankOrderId.poNumber}</span>;
+        }
+        return <span className="text-gray-400 text-sm">-</span>;
+      },
+    },
+    {
+      header: 'BIP eForm',
+      accessor: 'bipOrderId',
+      width: '150px',
+      render: (po: PurchaseOrder) => {
+        if (po.bipOrderId && typeof po.bipOrderId === 'object') {
+          return <span className="text-sm text-gray-900">{po.bipOrderId.eforms}</span>;
+        }
+        return <span className="text-gray-400 text-sm">-</span>;
+      },
     },
     {
       header: 'Vendor',
@@ -764,7 +778,6 @@ const PurchaseOrdersPage = () => {
                   selectedIds={selectedPOIds}
                   onSelectionChange={setSelectedPOIds}
                   getItemId={(po) => po._id}
-                  onRowClick={(po) => !po.isMerged && router.push(`/purchase-orders/${po._id}`)}
                   emptyMessage="No purchase orders found"
                   isItemDisabled={(po) =>
                     po.status === 'merged' ||
@@ -786,7 +799,6 @@ const PurchaseOrdersPage = () => {
                 <Table
                   columns={columns}
                   data={purchaseOrders}
-                  onRowClick={(po) => router.push(`/purchase-orders/${po._id}`)}
                   emptyMessage="No purchase orders found"
                 />
               )}
