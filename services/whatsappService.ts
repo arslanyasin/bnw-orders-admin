@@ -19,7 +19,7 @@ export interface SendOrderConfirmationDto {
   phone: string;
   customerName: string;
   orderNumber: string;
-  orderPrice: number;
+  orderPrice: string;
   product: string;
   address: string;
 }
@@ -53,7 +53,7 @@ export const whatsappService = {
         {
           action: 'set_field_value',
           field_name: 'order total amount',
-          value: data.orderPrice.toLocaleString('en-US'),
+          value: data.orderPrice,
         },
         {
           action: 'set_field_value',
@@ -75,7 +75,7 @@ export const whatsappService = {
       phone: string;
       customerName: string;
       orderNumber: string;
-      orderPrice: number;
+      orderPrice: string;
       product: string;
       address: string;
     }>
