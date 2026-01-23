@@ -609,7 +609,7 @@ const BipOrdersPage = () => {
         phone: order.mobile1.startsWith('+92') ? order.mobile1 : `+92${order.mobile1.replace(/^0+/, '')}`,
         customerName: order.customerName,
         orderNumber: order.eforms,
-        orderPrice: order.amount,
+        orderPrice: `(-${order.amount}) Points`,
         address: `${order.address}, ${order.city}`,
         product: order.product,
       }));
