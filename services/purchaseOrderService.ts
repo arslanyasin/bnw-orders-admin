@@ -115,4 +115,29 @@ export const purchaseOrderService = {
     );
     return response.data;
   },
+
+  exportReport: async (
+    bankId: string,
+    startDate: string,
+    endDate: string
+  ): Promise<void> => {
+    const response = await apiClient.get('/purchase-orders/export', {
+      params: { bankId, startDate, endDate },
+      responseType: 'blob',
+    });
+
+    // Create blob URL and trigger download
+    const blob = new Blob([response.data], {
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    const timestamp = new Date().getTime();
+    link.download = `purchase-orders-${bankId}-${timestamp}.xlsx`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
+  },
 };

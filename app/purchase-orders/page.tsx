@@ -5,10 +5,12 @@ import { useRouter } from 'next/navigation';
 import AdminLayout from '@/components/AdminLayout';
 import { Button, Table, SelectableTable, Badge, Loader, CombinedPOPreviewModal } from '@/components';
 import PurchaseOrderFormModal from '@/components/PurchaseOrderFormModal';
+import ExportReportModal from '@/components/ExportReportModal';
 import { purchaseOrderService } from '@/services/purchaseOrderService';
 import { vendorService } from '@/services/vendorService';
-import { PurchaseOrder, Vendor, Product, CombinedPOPreview } from '@/types';
-import { Plus, Eye, Edit, Trash2, Search, Layers, XCircle } from 'lucide-react';
+import { bankService } from '@/services/bankService';
+import { PurchaseOrder, Vendor, Product, CombinedPOPreview, Bank } from '@/types';
+import { Plus, Eye, Edit, Trash2, Search, Layers, XCircle, Download } from 'lucide-react';
 
 type PurchaseOrderStatus = 'draft' | 'pending' | 'approved' | 'delivered' | 'cancelled' | 'merged';
 
@@ -43,6 +45,11 @@ const PurchaseOrdersPage = () => {
   const [serialNumbers, setSerialNumbers] = useState<Record<string, string>>({});
   const [isUpdatingSerials, setIsUpdatingSerials] = useState(false);
 
+  // Export report state
+  const [isExportModalOpen, setIsExportModalOpen] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
+  const [banks, setBanks] = useState<Bank[]>([]);
+
   // Fetch vendors on component mount
   useEffect(() => {
     const fetchVendors = async () => {
@@ -55,6 +62,20 @@ const PurchaseOrdersPage = () => {
       }
     };
     fetchVendors();
+  }, []);
+
+  // Fetch banks on component mount
+  useEffect(() => {
+    const fetchBanks = async () => {
+      try {
+        const response = await bankService.getAll({ limit: 1000 });
+        setBanks(response.data || []);
+      } catch (error) {
+        console.error('[Purchase Orders] Failed to fetch banks:', error);
+        setBanks([]);
+      }
+    };
+    fetchBanks();
   }, []);
 
   // Debounce search term
@@ -370,6 +391,19 @@ const PurchaseOrdersPage = () => {
     }
   };
 
+  const handleExportReport = async (bankId: string, startDate: string, endDate: string) => {
+    try {
+      setIsExporting(true);
+      await purchaseOrderService.exportReport(bankId, startDate, endDate);
+      setIsExportModalOpen(false);
+      alert('Report exported successfully');
+    } catch (error: any) {
+      alert(error.message || 'Failed to export report');
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
   const columns = [
     {
       header: 'PO #',
@@ -586,6 +620,10 @@ const PurchaseOrdersPage = () => {
                   isLoading={isUpdatingSerials}
                 >
                   Save Serial Numbers
+                </Button>
+                <Button variant="outline" onClick={() => setIsExportModalOpen(true)}>
+                  <Download size={20} className="mr-2" />
+                  Export Report
                 </Button>
                 <Button variant="outline" onClick={handleToggleCombineMode}>
                   <Layers size={20} className="mr-2" />
@@ -920,6 +958,15 @@ const PurchaseOrdersPage = () => {
           isLoading={isLoadingPreview}
           onConfirm={handleConfirmCombine}
           isConfirming={isCombining}
+        />
+
+        {/* Export Report Modal */}
+        <ExportReportModal
+          isOpen={isExportModalOpen}
+          onClose={() => setIsExportModalOpen(false)}
+          onExport={handleExportReport}
+          banks={banks}
+          isLoading={isExporting}
         />
       </div>
     </AdminLayout>

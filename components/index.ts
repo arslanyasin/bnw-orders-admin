@@ -11,3 +11,4 @@ export { default as EditBipOrderModal } from './EditBipOrderModal';
 export { default as CommentModal } from './CommentModal';
 export { default as BankOrderDetailModal } from './BankOrderDetailModal';
 export { default as BipOrderDetailModal } from './BipOrderDetailModal';
+export { default as ExportReportModal } from './ExportReportModal';
