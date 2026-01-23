@@ -636,7 +636,7 @@ const BankOrdersPage = () => {
         phone: order.mobile1.startsWith('+92') ? order.mobile1 : `+92${order.mobile1.replace(/^0+/, '')}`,
         customerName: order.customerName,
         orderNumber: order.poNumber,
-        orderPrice: Math.abs(order.redeemedPoints),
+        orderPrice:  `(-${order.redeemedPoints}) Points`,
         address: `${order.address}, ${order.city}`,
         product: order.product,
       }));
