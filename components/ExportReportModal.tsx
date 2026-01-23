@@ -10,7 +10,7 @@ interface Bank {
 interface ExportReportModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onExport: (bankId: string, startDate: string, endDate: string) => Promise<void>;
+  onExport: (bankId: string, startDate: string, endDate: string, orderType: string) => Promise<void>;
   banks: Bank[];
   isLoading?: boolean;
 }
@@ -25,19 +25,21 @@ const ExportReportModal: React.FC<ExportReportModalProps> = ({
   const [selectedBankId, setSelectedBankId] = useState('');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
+  const [orderType, setOrderType] = useState('both');
 
   useEffect(() => {
     if (!isOpen) {
       setSelectedBankId('');
       setStartDate('');
       setEndDate('');
+      setOrderType('both');
     }
   }, [isOpen]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (selectedBankId && startDate && endDate) {
-      await onExport(selectedBankId, startDate, endDate);
+      await onExport(selectedBankId, startDate, endDate, orderType);
     }
   };
 
@@ -63,6 +65,24 @@ const ExportReportModal: React.FC<ExportReportModalProps> = ({
                   {bank.bankName}
                 </option>
               ))}
+            </select>
+          </div>
+
+          {/* Order Type Selection */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Order Type <span className="text-red-500">*</span>
+            </label>
+            <select
+              value={orderType}
+              onChange={(e) => setOrderType(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              disabled={isLoading}
+              required
+            >
+              <option value="both">Both (Reward Order & HIP)</option>
+              <option value="bank-order">Reward Order</option>
+              <option value="bip-order">HIP</option>
             </select>
           </div>
 

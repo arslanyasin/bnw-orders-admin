@@ -119,10 +119,11 @@ export const purchaseOrderService = {
   exportReport: async (
     bankId: string,
     startDate: string,
-    endDate: string
+    endDate: string,
+    orderType: string
   ): Promise<void> => {
     const response = await apiClient.get('/purchase-orders/export', {
-      params: { bankId, startDate, endDate },
+      params: { bankId, startDate, endDate, orderType },
       responseType: 'blob',
     });
 

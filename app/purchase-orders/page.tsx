@@ -391,10 +391,10 @@ const PurchaseOrdersPage = () => {
     }
   };
 
-  const handleExportReport = async (bankId: string, startDate: string, endDate: string) => {
+  const handleExportReport = async (bankId: string, startDate: string, endDate: string, orderType: string) => {
     try {
       setIsExporting(true);
-      await purchaseOrderService.exportReport(bankId, startDate, endDate);
+      await purchaseOrderService.exportReport(bankId, startDate, endDate, orderType);
       setIsExportModalOpen(false);
       alert('Report exported successfully');
     } catch (error: any) {
