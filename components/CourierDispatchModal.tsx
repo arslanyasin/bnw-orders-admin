@@ -29,6 +29,7 @@ const CourierDispatchModal: React.FC<CourierDispatchModalProps> = ({
   const [loadingCouriers, setLoadingCouriers] = useState(true);
   const [isManualDispatch, setIsManualDispatch] = useState(true);
   const [selectedCourier, setSelectedCourier] = useState<'tcs' | 'leopards' | ''>('');
+  const [tcsService, setTcsService] = useState<'O' | 'D' | 'MYO' | ''>('');
   const [declaredValue, setDeclaredValue] = useState<string>(defaultDeclaredValue.toString());
   const [productDescription, setProductDescription] = useState<string>(defaultProductDescription);
   const [remarks, setRemarks] = useState<string>('Please handle with care and call the customer before delivery.');
@@ -77,6 +78,12 @@ const CourierDispatchModal: React.FC<CourierDispatchModalProps> = ({
       return;
     }
 
+    // Validate TCS service selection
+    if (selectedCourier === 'tcs' && !tcsService) {
+      setError('Please select a TCS service');
+      return;
+    }
+
     // Validate manual dispatch fields
     if (isManualDispatch) {
       if (!trackingNumber.trim()) {
@@ -117,6 +124,11 @@ const CourierDispatchModal: React.FC<CourierDispatchModalProps> = ({
         dispatchData.specialInstructions = remarks.trim();
     }
 
+    // Add TCS service if TCS courier is selected
+    if (selectedCourier === 'tcs' && tcsService) {
+      dispatchData.serviceCode = tcsService;
+    }
+
     try {
       await onDispatch(dispatchData);
       handleClose();
@@ -127,6 +139,7 @@ const CourierDispatchModal: React.FC<CourierDispatchModalProps> = ({
 
   const handleClose = () => {
     setSelectedCourier('');
+    setTcsService('');
     setDeclaredValue('0');
     setProductDescription('');
     setRemarks('');
@@ -230,6 +243,27 @@ const CourierDispatchModal: React.FC<CourierDispatchModalProps> = ({
                   ))}
                 </div>
               </div>
+
+              {/* TCS Service Selection */}
+              {selectedCourier === 'tcs' && (
+                <div>
+                  <label className="block mb-3 text-sm font-semibold text-gray-700">
+                    TCS Service <span className="text-red-500">*</span>
+                  </label>
+                  <select
+                    value={tcsService}
+                    onChange={(e) => setTcsService(e.target.value as 'O' | 'D' | 'MYO')}
+                    className="bg-white border-2 border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-4 focus:ring-green-100 focus:border-green-500 block w-full px-4 py-3 transition-all duration-200"
+                    disabled={isLoading}
+                    required
+                  >
+                    <option value="">Select Service</option>
+                    <option value="O">Express</option>
+                    <option value="D">Economy Express</option>
+                    <option value="MYO">My Collect</option>
+                  </select>
+                </div>
+              )}
 
               {/* Manual Dispatch Fields */}
               {isManualDispatch && (

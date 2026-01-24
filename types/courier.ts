@@ -17,6 +17,7 @@ export interface DispatchOrderRequest {
   isManualDispatch?: boolean;
   trackingNumber?: string;
   consignmentNumber?: string;
+  serviceCode?: 'O' | 'D' | 'MYO';
 }
 
 export interface Shipment {
