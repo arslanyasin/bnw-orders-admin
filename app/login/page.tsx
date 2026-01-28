@@ -18,7 +18,7 @@ export default function LoginPage() {
 
   // Redirect if already authenticated
   useEffect(() => {
-    if (isAuthenticated && !isRedirecting) {
+    if (isAuthenticated) {
       setIsRedirecting(true);
       router.replace('/dashboard');
     }
