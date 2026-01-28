@@ -636,9 +636,10 @@ const BankOrdersPage = () => {
         phone: order.mobile1.startsWith('+92') ? order.mobile1 : `+92${order.mobile1.replace(/^0+/, '')}`,
         customerName: order.customerName,
         orderNumber: order.poNumber,
-        orderPrice:  `(-${order.redeemedPoints}) Points`,
+        rewardPoints: `(-${order.redeemedPoints}) Points`,
         address: `${order.address}, ${order.city}`,
         product: order.product,
+        flowId: 1769182700466,
       }));
 
       const result = await whatsappService.sendBulkOrderConfirmations(ordersData);

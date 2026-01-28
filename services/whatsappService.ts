@@ -19,16 +19,26 @@ export interface SendOrderConfirmationDto {
   phone: string;
   customerName: string;
   orderNumber: string;
-  orderPrice: string;
+  orderPrice?: string;
+  rewardPoints?: string;
   product: string;
   address: string;
+  flowId?: number;
 }
 
 const WHATSAPP_FLOW_ID = 1767708715182;
+const WHATSAPP_FLOW_ID_BANK = 1769182700466;
 
 export const whatsappService = {
   sendOrderConfirmation: async (data: SendOrderConfirmationDto): Promise<void> => {
     console.log('SendOrderConfirmation', data);
+
+    // Use custom flow ID if provided, otherwise use default
+    const flowId = data.flowId || WHATSAPP_FLOW_ID;
+
+    // Use rewardPoints if provided, otherwise use orderPrice
+    const amountValue = data.rewardPoints || data.orderPrice || '';
+
     const requestBody: SendWhatsAppDto = {
       phone: data.phone,
       email: '',
@@ -53,7 +63,7 @@ export const whatsappService = {
         {
           action: 'set_field_value',
           field_name: 'order total amount',
-          value: data.orderPrice,
+          value: amountValue,
         },
         {
           action: 'set_field_value',
@@ -62,7 +72,7 @@ export const whatsappService = {
         },
         {
           action: 'send_flow',
-          flow_id: WHATSAPP_FLOW_ID,
+          flow_id: flowId,
         },
       ],
     };
@@ -75,9 +85,11 @@ export const whatsappService = {
       phone: string;
       customerName: string;
       orderNumber: string;
-      orderPrice: string;
+      orderPrice?: string;
+      rewardPoints?: string;
       product: string;
       address: string;
+      flowId?: number;
     }>
   ): Promise<{ success: number; failed: number; errors: Array<{ orderNumber: string; error: string }> }> => {
     let success = 0;
