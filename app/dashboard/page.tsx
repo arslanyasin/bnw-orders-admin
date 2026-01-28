@@ -159,7 +159,7 @@ const DashboardPage = () => {
                     : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                 }`}
               >
-                BIP Orders
+                HIP Orders
               </button>
             </div>
 
@@ -260,7 +260,6 @@ const DashboardPage = () => {
           {/* Financial Overview */}
           <div className="bg-white rounded-lg border border-gray-200 p-6">
             <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-              <DollarSign size={20} className="text-green-600" />
               Financial Overview
             </h2>
             <div className="space-y-3">

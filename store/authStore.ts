@@ -17,8 +17,9 @@ export const useAuthStore = create<AuthState>()(
         try {
           set({ isLoading: true });
           const response = await authService.login(credentials);
-
+            console.log('login',response)
           const { user, accessToken, refreshToken } = response.data;
+            console.log('user',user)
 
           // Store access token in cookie (15 minutes expiry - matching JWT)
           Cookies.set('admin_token', accessToken, {
@@ -33,6 +34,7 @@ export const useAuthStore = create<AuthState>()(
             secure: process.env.NODE_ENV === 'production',
             sameSite: 'strict'
           });
+            console.log('Cookies',Cookies)
 
           set({
             user,
@@ -41,6 +43,7 @@ export const useAuthStore = create<AuthState>()(
             isAuthenticated: true,
             isLoading: false,
           });
+
         } catch (error) {
           set({ isLoading: false });
           throw error;
