@@ -24,6 +24,7 @@ export interface BankOrder {
   poNumber: string;
   orderDate: string;
   redeemedPoints: number;
+  color?: string;
   status: OrderStatus;
   statusHistory?: StatusHistoryEntry[];
   shipmentId?: {

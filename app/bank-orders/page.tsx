@@ -897,6 +897,16 @@ const BankOrdersPage = () => {
       width: '280px',
     },
     {
+      header: 'Color',
+      accessor: 'color',
+      width: '120px',
+      render: (order: BankOrder) => (
+        <span className="text-sm text-gray-900">
+          {order.color || '-'}
+        </span>
+      ),
+    },
+    {
       header: 'Mobile',
       accessor: 'mobile1',
       width: '140px',
