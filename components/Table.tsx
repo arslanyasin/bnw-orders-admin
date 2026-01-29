@@ -13,6 +13,7 @@ interface TableProps<T> {
   onRowClick?: (item: T) => void;
   isLoading?: boolean;
   emptyMessage?: string;
+  getRowClassName?: (item: T) => string;
 }
 
 function Table<T extends { id?: string | number; _id?: string }>({
@@ -21,6 +22,7 @@ function Table<T extends { id?: string | number; _id?: string }>({
   onRowClick,
   isLoading = false,
   emptyMessage = 'No data available',
+  getRowClassName,
 }: TableProps<T>) {
   if (isLoading) {
     return (
@@ -61,7 +63,7 @@ function Table<T extends { id?: string | number; _id?: string }>({
               key={item.id || item._id}
               className={`bg-white border-b hover:bg-gray-50 ${
                 onRowClick ? 'cursor-pointer' : ''
-              }`}
+              } ${getRowClassName ? getRowClassName(item) : ''}`}
               onClick={() => onRowClick?.(item)}
             >
               {columns.map((column, colIndex) => (

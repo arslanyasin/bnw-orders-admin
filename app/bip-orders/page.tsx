@@ -748,6 +748,36 @@ const BipOrdersPage = () => {
     }).format(amount);
   };
 
+  // Helper function to get status badge colors
+  const getStatusColor = (status: OrderStatus) => {
+    const colors = {
+      pending: 'bg-yellow-100 text-yellow-800 border-yellow-300',
+      confirmed: 'bg-blue-100 text-blue-800 border-blue-300',
+      processing: 'bg-purple-100 text-purple-800 border-purple-300',
+      dispatched: 'bg-indigo-100 text-indigo-800 border-indigo-300',
+      shipped: 'bg-cyan-100 text-cyan-800 border-cyan-300',
+      delivered: 'bg-green-100 text-green-800 border-green-300',
+      cancelled: 'bg-red-100 text-red-800 border-red-300',
+      returned: 'bg-orange-100 text-orange-800 border-orange-300',
+    };
+    return colors[status] || 'bg-gray-100 text-gray-800 border-gray-300';
+  };
+
+  // Helper function to get row background color
+  const getRowColor = (status: OrderStatus) => {
+    const colors = {
+      pending: 'bg-yellow-50/30',
+      confirmed: 'bg-blue-50/30',
+      processing: 'bg-purple-50/30',
+      dispatched: 'bg-indigo-50/30',
+      shipped: 'bg-cyan-50/30',
+      delivered: 'bg-green-50/30',
+      cancelled: 'bg-red-50/30',
+      returned: 'bg-orange-50/30',
+    };
+    return colors[status] || '';
+  };
+
   // Create columns array with conditional checkbox column
   const checkboxColumn = isPrintChallanMode || isPrintLabelsMode || isBulkPOMode || isWhatsAppMode
     ? {
@@ -873,9 +903,12 @@ const BipOrdersPage = () => {
     {
       header: 'Status',
       accessor: 'status',
-      width: '180px',
+      width: '200px',
       render: (order: BipOrder) => (
         <div className="flex items-center gap-2">
+          <span className={`px-2.5 py-1 text-xs font-semibold rounded-full border ${getStatusColor(order.status)} capitalize`}>
+            {order.status}
+          </span>
           <select
               value={order.status}
               onChange={(e) => {
@@ -1333,6 +1366,7 @@ const BipOrdersPage = () => {
                 columns={columns}
                 data={orders}
                 emptyMessage="No BIP orders found"
+                getRowClassName={(order) => getRowColor(order.status)}
               />
 
               {/* Pagination */}
