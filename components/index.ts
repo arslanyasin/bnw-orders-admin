@@ -12,3 +12,4 @@ export { default as CommentModal } from './CommentModal';
 export { default as BankOrderDetailModal } from './BankOrderDetailModal';
 export { default as BipOrderDetailModal } from './BipOrderDetailModal';
 export { default as ExportReportModal } from './ExportReportModal';
+export { default as InvoiceGenerationModal } from './InvoiceGenerationModal';

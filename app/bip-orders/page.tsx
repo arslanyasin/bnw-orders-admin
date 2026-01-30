@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import AdminLayout from '@/components/AdminLayout';
-import { Button, Table, Loader, EditBipOrderModal, CommentModal, BipOrderDetailModal } from '@/components';
+import { Button, Table, Loader, EditBipOrderModal, CommentModal, BipOrderDetailModal, InvoiceGenerationModal } from '@/components';
 import ImportBipOrdersModal from '@/components/ImportBipOrdersModal';
 import PurchaseOrderFormModal from '@/components/PurchaseOrderFormModal';
 import CourierDispatchModal from '@/components/CourierDispatchModal';
@@ -15,7 +15,7 @@ import { courierService } from '@/services/courierService';
 import { deliveryService } from '@/services/deliveryService';
 import { whatsappService } from '@/services/whatsappService';
 import { BipOrder, OrderStatus, DispatchOrderRequest } from '@/types';
-import { Edit, Trash2, Eye, Search, ArrowUpDown, ArrowUp, ArrowDown, Upload, ShoppingCart, Truck, Printer, FileText, MessageCircle } from 'lucide-react';
+import { Edit, Trash2, Eye, Search, ArrowUpDown, ArrowUp, ArrowDown, Upload, ShoppingCart, Truck, Printer, FileText, MessageCircle, FileDown } from 'lucide-react';
 
 type SortField = 'poNumber' | 'customerName' | 'product' | 'orderDate' | 'city' | 'amount';
 type SortOrder = 'asc' | 'desc';
@@ -78,6 +78,9 @@ const BipOrdersPage = () => {
   // Print labels mode state
   const [isPrintLabelsMode, setIsPrintLabelsMode] = useState(false);
   const [selectedOrdersForLabels, setSelectedOrdersForLabels] = useState<string[]>([]);
+
+  // Invoice modal state
+  const [isInvoiceModalOpen, setIsInvoiceModalOpen] = useState(false);
 
   // Debounce search term
   useEffect(() => {
@@ -1171,6 +1174,13 @@ const BipOrdersPage = () => {
                   Print Labels
                 </Button>
                 <Button
+                  variant="outline"
+                  onClick={() => setIsInvoiceModalOpen(true)}
+                >
+                  <FileDown size={20} className="mr-2" />
+                  Generate Invoice
+                </Button>
+                <Button
                   variant="primary"
                   onClick={() => setIsImportModalOpen(true)}
                 >
@@ -1561,6 +1571,13 @@ const BipOrdersPage = () => {
           order={selectedOrderForDetail}
           onAddComment={handleAddCommentFromDetail}
           isAddingComment={isAddingComment}
+        />
+
+        {/* Invoice Generation Modal */}
+        <InvoiceGenerationModal
+          isOpen={isInvoiceModalOpen}
+          onClose={() => setIsInvoiceModalOpen(false)}
+          orderType="bip_orders"
         />
       </div>
     </AdminLayout>

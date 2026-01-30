@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import AdminLayout from '@/components/AdminLayout';
-import { Button, Table, Badge, Loader, EditOrderModal, CommentModal, BankOrderDetailModal } from '@/components';
+import { Button, Table, Badge, Loader, EditOrderModal, CommentModal, BankOrderDetailModal, InvoiceGenerationModal } from '@/components';
 import ImportOrdersModal from '@/components/ImportOrdersModal';
 import PurchaseOrderFormModal from '@/components/PurchaseOrderFormModal';
 import CourierDispatchModal from '@/components/CourierDispatchModal';
@@ -15,7 +15,7 @@ import { courierService } from '@/services/courierService';
 import { deliveryService } from '@/services/deliveryService';
 import { whatsappService } from '@/services/whatsappService';
 import { BankOrder, OrderStatus, DispatchOrderRequest } from '@/types';
-import { Edit, Trash2, Eye, Search, ArrowUpDown, ArrowUp, ArrowDown, Upload, ShoppingCart, Truck, Printer, FileText, MessageCircle } from 'lucide-react';
+import { Edit, Trash2, Eye, Search, ArrowUpDown, ArrowUp, ArrowDown, Upload, ShoppingCart, Truck, Printer, FileText, MessageCircle, FileDown } from 'lucide-react';
 
 type SortField = 'poNumber' | 'customerName' | 'product' | 'orderDate' | 'city' | 'redeemedPoints';
 type SortOrder = 'asc' | 'desc';
@@ -78,6 +78,9 @@ const BankOrdersPage = () => {
   // Print labels mode state
   const [isPrintLabelsMode, setIsPrintLabelsMode] = useState(false);
   const [selectedOrdersForLabels, setSelectedOrdersForLabels] = useState<string[]>([]);
+
+  // Invoice modal state
+  const [isInvoiceModalOpen, setIsInvoiceModalOpen] = useState(false);
 
   // Debounce search term
   useEffect(() => {
@@ -1172,6 +1175,13 @@ const BankOrdersPage = () => {
                   Print Labels
                 </Button>
                 <Button
+                  variant="outline"
+                  onClick={() => setIsInvoiceModalOpen(true)}
+                >
+                  <FileDown size={20} className="mr-2" />
+                  Generate Invoice
+                </Button>
+                <Button
                   variant="primary"
                   onClick={() => setIsImportModalOpen(true)}
                 >
@@ -1566,6 +1576,13 @@ const BankOrdersPage = () => {
           order={selectedOrderForDetail}
           onAddComment={handleAddCommentFromDetail}
           isAddingComment={isAddingComment}
+        />
+
+        {/* Invoice Generation Modal */}
+        <InvoiceGenerationModal
+          isOpen={isInvoiceModalOpen}
+          onClose={() => setIsInvoiceModalOpen(false)}
+          orderType="bank_orders"
         />
       </div>
     </AdminLayout>
